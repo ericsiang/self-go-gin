@@ -2,9 +2,7 @@ module api
 
 go 1.20
 
-require (
-	github.com/gin-contrib/zap v0.2.0
-)
+require github.com/gin-contrib/zap v0.2.0
 
 require (
 	github.com/bytedance/sonic v1.10.2 // indirect
@@ -58,4 +56,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.2 // indirect
 	gorm.io/gorm v1.25.5 // indirect
+	moul.io/zapgorm2 v1.3.0 // indirect
 )

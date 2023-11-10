@@ -1,49 +1,26 @@
 package main
 
 import (
+	"api/database/migrate"
 	"api/initialize"
-	"fmt"
-	"time"
+	"api/model"
 
-	ginzap "github.com/gin-contrib/zap"
-	"github.com/gin-gonic/gin"
+	// "go.uber.org/zap"
+	// "strconv"
+	// "api/router"
 )
 
 func main() {
 	initialize.InitConfig()
-	r := gin.New()
-	logger := initialize.GetLogger()
-	/* Add a ginzap middleware, which:
-	 * - Logs all requests, like a combined access and error log.
-	 * - Logs to stdout.
-	 * - RFC3339 with UTC time format.
-	 */
-	r.Use(ginzap.Ginzap(logger, "", true))
+	migrate.Migrate()
+	use := model.Users{}
+	use.GetUsersById(1)
+	// zap.S().Info("user : ", user)
+	// zap.S().Error("err : ", err)
+	// r := router.Router()
 
-	/* Logs all panic to error log
-	 *  - stack means whether output the stack info.
-	 */
-	r.Use(ginzap.RecoveryWithZap(logger, true))
+	// // Listen and Server
+	// serverPort := ":" + strconv.Itoa(initialize.ServerEnv.GetServerPort())
 
-	// Example ping request.
-	r.GET("/ping", func(c *gin.Context) {
-		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
-	})
-
-	// Example when panic happen.
-	r.GET("/panic", func(c *gin.Context) {
-		panic("An unexpected error happen!")
-	})
-
-	//記錄 info 級別日志
-	// logger.Info("info 級別日志")
-
-	// //記錄 error 級別日志
-	// logger.Error("error 級別日志")
-
-	// logger.Fatal("fatal 級別日志")
-	// logger.Warn("warn 級別日志")
-
-	// Listen and Server
-	r.Run(":8888")
+	// r.Run(serverPort)
 }

@@ -25,8 +25,29 @@ type RedisConfig struct {
 }
 
 type ServerConfig struct {
-	Port    int           `mapstructure:"port" json:"port"`
-	MysqlDB MysqlConfig   `mapstructure:"mysql" json:"mysql"`
-	Redis   RedisConfig   `mapstructure:"redis" json:"redis"`
-	MongoDB MongoDBConfig `mapstructure:"mongodb" json:"mongodb"`
+	APP_Mode string        `mapstructure:"APP_Mode" json:"APP_Mode"`
+	Port     int           `mapstructure:"Port" json:"Port"`
+	MysqlDB  MysqlConfig   `mapstructure:"Mysql" json:"Mysql"`
+	Redis    RedisConfig   `mapstructure:"Redis" json:"Redis"`
+	MongoDB  MongoDBConfig `mapstructure:"MongoDB" json:"MongoDB"`
+}
+
+func (s *ServerConfig) GetServerPort() int {
+	return s.Port
+}
+
+func (s *ServerConfig) GetServerAppMode() string {
+	return s.APP_Mode
+}
+
+func (s *ServerConfig) GetServerMysqlConfig() MysqlConfig {
+	return s.MysqlDB
+}
+
+func (s *ServerConfig) GetServerRedisConfig() RedisConfig {
+	return s.Redis
+}
+
+func (s *ServerConfig) GetServerMongoDBConfig() MongoDBConfig {
+	return s.MongoDB
 }
