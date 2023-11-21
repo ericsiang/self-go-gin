@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+
 func CustomTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05"))
 }
@@ -50,7 +51,7 @@ func initZap() *zap.Logger {
 		encoder = zapcore.NewJSONEncoder(encoderConfig) //使用 json 格式
 
 	case "debug":
-		encoder = zapcore.NewConsoleEncoder(encoderConfig) //使用 json 格式
+		encoder = zapcore.NewConsoleEncoder(encoderConfig) //使用 console 格式
 	default:
 		encoder = zapcore.NewJSONEncoder(encoderConfig) //使用 json 格式
 	}
@@ -82,5 +83,3 @@ func initLogger(logger *zap.Logger) {
 
 	zap.ReplaceGlobals(logger) //使用全局logger(設定了在其他地方調用 zap.S() or zap.L() 才會生效)
 }
-
-

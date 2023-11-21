@@ -1,0 +1,58 @@
+package initialize
+
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/locales/en"
+	"github.com/go-playground/locales/zh"
+	unitrans "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
+	chTranslations "github.com/go-playground/validator/v10/translations/zh"
+	"go.uber.org/zap"
+)
+
+// var trans unitrans.Translator
+
+// loca 通常取决于 http 请求头的 'Accept-Language'
+func initValidateLang(local string) (err error) {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		zhT := zh.New() //chinese
+		enT := en.New() //english
+		zap.S().Info(enT)
+		unitrans := unitrans.New(enT, zhT, enT)
+		zap.S().Info(unitrans)
+		var ok bool
+		Trans, ok = unitrans.GetTranslator(local)
+		zap.S().Info(Trans)
+		if !ok {
+			return fmt.Errorf("unitrans.GetTranslator(%s) failed", local)
+		}
+
+		//register translate
+		// 注册翻译器
+		switch local {
+		case "en":
+			err = enTranslations.RegisterDefaultTranslations(v, Trans)
+		case "zh":
+			err = chTranslations.RegisterDefaultTranslations(v, Trans)
+		default:
+			err = enTranslations.RegisterDefaultTranslations(v, Trans)
+		}
+		return
+
+	}
+	return
+}
+
+func ErrorValidateCheckAndTrans(err error) (translateErrs validator.ValidationErrorsTranslations,ok bool) {
+	// 取得validator.ValidationErrors類型的errors，
+	validErrs, ok := err.(validator.ValidationErrors)
+	if ok {  //是validator.ValidationErrors類型錯誤則進行翻譯
+		translateErrs = validErrs.Translate(Trans)
+		return translateErrs,true
+	}
+
+	return nil,false
+}

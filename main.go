@@ -3,24 +3,18 @@ package main
 import (
 	"api/database/migrate"
 	"api/initialize"
-	"api/model"
-
-	// "go.uber.org/zap"
-	// "strconv"
-	// "api/router"
+	"api/router"
+	"strconv"
 )
 
 func main() {
 	initialize.InitConfig()
-	migrate.Migrate()
-	use := model.Users{}
-	use.GetUsersById(1)
-	// zap.S().Info("user : ", user)
-	// zap.S().Error("err : ", err)
-	// r := router.Router()
+	migrate.Migrate() // migrate database
 
-	// // Listen and Server
-	// serverPort := ":" + strconv.Itoa(initialize.ServerEnv.GetServerPort())
+	// Set Router
+	r := router.Router()
 
-	// r.Run(serverPort)
+	// Listen and Server
+	serverPort := ":" + strconv.Itoa(initialize.ServerEnv.GetServerPort())
+	r.Run(serverPort)
 }

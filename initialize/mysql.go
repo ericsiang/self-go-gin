@@ -17,10 +17,10 @@ var db *gorm.DB
 func initMysql() {
 	var config *gorm.Config
 	gormZaplogger := zapgorm2.New(zap.L())
-	ori_loggger := logger.Default.LogMode(logger.Info)
-	zap.S().Info("logger level: ", logger.Info)
-	zap.S().Info("ori_loggger : ", ori_loggger)
-	zap.S().Info("gormZaplogger : ", gormZaplogger)
+	logger.Default.LogMode(logger.Error)
+	// zap.S().Info("logger level: ", logger.Info)
+	// zap.S().Info("ori_loggger : ", ori_loggger)
+	// zap.S().Info("gormZaplogger : ", gormZaplogger)
 	if gin.Mode() == gin.ReleaseMode {
 		config = &gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,
