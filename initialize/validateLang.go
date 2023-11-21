@@ -10,7 +10,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	chTranslations "github.com/go-playground/validator/v10/translations/zh"
-	"go.uber.org/zap"
 )
 
 // var trans unitrans.Translator
@@ -20,12 +19,10 @@ func initValidateLang(local string) (err error) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		zhT := zh.New() //chinese
 		enT := en.New() //english
-		zap.S().Info(enT)
 		unitrans := unitrans.New(enT, zhT, enT)
-		zap.S().Info(unitrans)
+
 		var ok bool
 		Trans, ok = unitrans.GetTranslator(local)
-		zap.S().Info(Trans)
 		if !ok {
 			return fmt.Errorf("unitrans.GetTranslator(%s) failed", local)
 		}

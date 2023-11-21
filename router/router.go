@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 )
@@ -20,21 +21,20 @@ func Router() *gin.Engine {
 	default:
 		gin.SetMode(gin.DebugMode)
 	}
-	r := gin.New()
+	router := gin.New()
 	logger := initialize.Logger
 	/* Add a ginzap middleware, which:
 	 * - Logs all requests, like a combined access and error log.
 	 * - Logs to stdout.
 	 * - RFC3339 with UTC time format.
 	 */
-	r.Use(ginzap.Ginzap(logger, "", true))
+	router.Use(ginzap.Ginzap(logger, "", true))
 
 	/* Logs all panic to error log
 	 *  - stack means whether output the stack info.
 	 */
-	r.Use(ginzap.RecoveryWithZap(logger, true))
-
-	router := gin.Default()
+	router.Use(ginzap.RecoveryWithZap(logger, true))
+	router.Use(cors.Default()) //跨域請求的中間件
 
 	//==============================   no auth group   =================================
 
@@ -47,9 +47,9 @@ func Router() *gin.Engine {
 	Login(apiV1UsersGroup)
 
 	//==============================   auth group   =================================
-	apiV1AuthGroup := router.Group("/api/v1/auth")
-	apiV1AuthUsersGroup := router.Group("/api/v1/auth")
-	apiV1AuthGroup.Use(middleware.JwtAuthMiddleware())
+	apiV1AuthGroup := apiV1Group.Group("/auth")
+	apiV1AuthUsersGroup := apiV1AuthGroup.Group("/users")
+	apiV1AuthUsersGroup.Use(middleware.JwtAuthMiddleware())
 	{
 		// Users
 		Users(apiV1AuthUsersGroup)
@@ -69,15 +69,15 @@ func Router() *gin.Engine {
 }
 
 // =================================   no auth group   =====================================
-func CreateUser(router *gin.RouterGroup){
+func CreateUser(router *gin.RouterGroup) {
 	router.POST("/", v1.CreateUser)
-}	
+}
 func Login(router *gin.RouterGroup) {
 	router.POST("/login", v1.UserLogin)
 }
 
-//=================================   auth group   =====================================
+// =================================   auth group   =====================================
 func Users(router *gin.RouterGroup) {
-	router.GET("/users", v1.GetUsers)
-	router.GET("/users/:id", v1.GetUsersById)
+	router.GET("/", v1.GetUsers)
+	router.GET("/:filterUsersId", v1.GetUsersById)
 }

@@ -1,4 +1,4 @@
-package util
+package jwt_secret
 
 import (
 	"time"

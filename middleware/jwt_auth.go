@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	util "api/util/jwt"
+	"api/util/jwt_secret"
 	"net/http"
 	"strings"
 
@@ -22,8 +22,8 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			jwtToken := strings.Split(bearerToken, " ")
 			token := jwtToken[1]
 
-			usersId, err := util.ParseToken(token)
-			c.Set("userssId", usersId)
+			claims, err := jwt_secret.ParseToken(token)
+			c.Set("usersId", claims.UserID)
 			if err != nil {
 				switch err.(*jwt.ValidationError).Errors {
 				case jwt.ValidationErrorExpired:
