@@ -12,7 +12,7 @@ import (
 	chTranslations "github.com/go-playground/validator/v10/translations/zh"
 )
 
-// var trans unitrans.Translator
+var trans unitrans.Translator
 
 // loca 通常取决于 http 请求头的 'Accept-Language'
 func initValidateLang(local string) (err error) {
@@ -22,7 +22,7 @@ func initValidateLang(local string) (err error) {
 		unitrans := unitrans.New(enT, zhT, enT)
 
 		var ok bool
-		Trans, ok = unitrans.GetTranslator(local)
+		trans, ok = unitrans.GetTranslator(local)
 		if !ok {
 			return fmt.Errorf("unitrans.GetTranslator(%s) failed", local)
 		}
@@ -31,23 +31,23 @@ func initValidateLang(local string) (err error) {
 		// 注册翻译器
 		switch local {
 		case "en":
-			err = enTranslations.RegisterDefaultTranslations(v, Trans)
+			err = enTranslations.RegisterDefaultTranslations(v, trans)
 		case "zh":
-			err = chTranslations.RegisterDefaultTranslations(v, Trans)
+			err = chTranslations.RegisterDefaultTranslations(v, trans)
 		default:
-			err = enTranslations.RegisterDefaultTranslations(v, Trans)
+			err = enTranslations.RegisterDefaultTranslations(v, trans)
 		}
-		return
+		return nil
 
 	}
-	return
+	return nil
 }
 
 func ErrorValidateCheckAndTrans(err error) (translateErrs validator.ValidationErrorsTranslations,ok bool) {
 	// 取得validator.ValidationErrors類型的errors，
 	validErrs, ok := err.(validator.ValidationErrors)
 	if ok {  //是validator.ValidationErrors類型錯誤則進行翻譯
-		translateErrs = validErrs.Translate(Trans)
+		translateErrs = validErrs.Translate(trans)
 		return translateErrs,true
 	}
 

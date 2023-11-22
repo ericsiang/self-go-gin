@@ -30,18 +30,18 @@ func initMysql() {
 		config = &gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,
 			SkipDefaultTransaction:                   true,
-			Logger : gormZaplogger,
+			Logger:                                   gormZaplogger,
 		}
 	}
 
 	//注意：User和Password为MySQL資料庫的管理員密碼，Host和Port為資料庫連接ip端口，DBname為要連接的資料庫
 	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", User,Password,Ip,Port,DBName)
-	dsn := ServerEnv.MysqlDB.Username + ":" + ServerEnv.MysqlDB.Password + "@tcp(" + ServerEnv.MysqlDB.Host + ":" + strconv.Itoa((ServerEnv.MysqlDB.Port)) + ")/" + ServerEnv.MysqlDB.DBName + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := GetServerEnv().MysqlDB.Username + ":" + GetServerEnv().MysqlDB.Password + "@tcp(" + GetServerEnv().MysqlDB.Host + ":" + strconv.Itoa((GetServerEnv().MysqlDB.Port)) + ")/" + GetServerEnv().MysqlDB.DBName + "?charset=utf8mb4&parseTime=True&loc=Local"
 	// zap.L().Info("dsn :"+ dsn)
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), config)
 	if err != nil {
-		zap.S().Error("mysql connect error :"+ err.Error())
+		panic(err)
 	}
 
 	sqlDB, _ := db.DB()
@@ -49,6 +49,7 @@ func initMysql() {
 	sqlDB.SetMaxOpenConns(100)
 
 	model.SetDB(db)
+	zap.S().Info("mysql connect success")
 }
 
 func GetMysqlDB() *gorm.DB {

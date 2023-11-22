@@ -2,7 +2,18 @@
 golang gin  framwork   設計自用模板
 
 ### 檔案結構
-
+api -> controller
+middleware
+router 
+validate
+response
+model
+migrate
+test
+log
+util
+db connect
+redis connect
 
 ### 使用到的 package
 * github.com/spf13/viper  Viper是一個配置設定文件、環境變量
@@ -14,3 +25,4 @@ golang gin  framwork   設計自用模板
 * github.com/go-sql-driver/mysql  MySQL 驅動，連接 MySQL 數據庫
 * github.com/dgrijalva/jwt-go  JSON Web Token (JWT) 庫
 * github.com/go-playground/validator 驗證器用於驗證結構體和個別的數據
+* github.com/gin-contrib/cors 跨域請求的中間件

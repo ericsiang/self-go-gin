@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+var zapLogger *zap.Logger
 
 func CustomTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05"))
@@ -46,7 +47,7 @@ func initZap() *zap.Logger {
 	}
 
 	var encoder zapcore.Encoder
-	switch ServerEnv.GetServerAppMode() {
+	switch GetServerEnv().GetServerAppMode() {
 	case "release":
 		encoder = zapcore.NewJSONEncoder(encoderConfig) //使用 json 格式
 
@@ -75,11 +76,15 @@ func initZap() *zap.Logger {
 
 
 
-func initLogger(logger *zap.Logger) {
+func initLogger() {
 	//初始化zap日志
-	logger = initZap()
+	zapLogger = initZap()
 
-	defer logger.Sync() // zap底层有缓冲。在任何情况下执行 defer logger.Sync() 是一个很好的习惯
+	defer zapLogger.Sync() // zap底层有缓冲。在任何情况下执行 defer logger.Sync() 是一个很好的习惯
 
-	zap.ReplaceGlobals(logger) //使用全局logger(設定了在其他地方調用 zap.S() or zap.L() 才會生效)
+	zap.ReplaceGlobals(zapLogger) //使用全局logger(設定了在其他地方調用 zap.S() or zap.L() 才會生效)
+}
+
+func GetZapLogger() *zap.Logger {
+	return zapLogger
 }

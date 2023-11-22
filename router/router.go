@@ -5,6 +5,7 @@ import (
 	"api/initialize"
 	"api/middleware"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -12,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Router() *gin.Engine {
-	switch initialize.ServerEnv.GetServerAppMode() {
+func Router(quit chan os.Signal) *gin.Engine {
+	switch initialize.GetServerEnv().GetServerAppMode() {
 	case "release":
 		gin.SetMode(gin.ReleaseMode)
 	case "debug":
@@ -22,7 +23,7 @@ func Router() *gin.Engine {
 		gin.SetMode(gin.DebugMode)
 	}
 	router := gin.New()
-	logger := initialize.Logger
+	logger := initialize.GetZapLogger()
 	/* Add a ginzap middleware, which:
 	 * - Logs all requests, like a combined access and error log.
 	 * - Logs to stdout.
@@ -54,6 +55,8 @@ func Router() *gin.Engine {
 		// Users
 		Users(apiV1AuthUsersGroup)
 	}
+	apiV1AuthAdminsGroup := apiV1AuthGroup.Group("/admins")
+	Shutdown(apiV1AuthAdminsGroup,quit)
 
 	// Example when panic happen.
 	// apiV1Group.GET("/panic", func(c *gin.Context) {
@@ -80,4 +83,12 @@ func Login(router *gin.RouterGroup) {
 func Users(router *gin.RouterGroup) {
 	router.GET("/", v1.GetUsers)
 	router.GET("/:filterUsersId", v1.GetUsersById)
+}
+
+
+func Shutdown(router *gin.RouterGroup ,quit chan os.Signal) {
+	router.GET("/shutdown", func(c *gin.Context) {
+		close(quit)
+		c.String(200, "shutdown")
+	})
 }
