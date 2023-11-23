@@ -1,11 +1,12 @@
 package router
 
 import (
-	v1 "api/api/v1"
+	"api/api/v1"
 	"api/initialize"
 	"api/middleware"
 	"fmt"
 	"os"
+	"syscall"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -88,7 +89,7 @@ func Users(router *gin.RouterGroup) {
 
 func Shutdown(router *gin.RouterGroup ,quit chan os.Signal) {
 	router.GET("/shutdown", func(c *gin.Context) {
-		close(quit)
+		quit <- syscall.SIGINT
 		c.String(200, "shutdown")
 	})
 }

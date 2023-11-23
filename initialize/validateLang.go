@@ -37,10 +37,10 @@ func initValidateLang(local string) (err error) {
 		default:
 			err = enTranslations.RegisterDefaultTranslations(v, trans)
 		}
-		return nil
+		return
 
 	}
-	return nil
+	return
 }
 
 func ErrorValidateCheckAndTrans(err error) (translateErrs validator.ValidationErrorsTranslations,ok bool) {

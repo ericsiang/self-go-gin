@@ -26,3 +26,4 @@ redis connect
 * github.com/dgrijalva/jwt-go  JSON Web Token (JWT) 庫
 * github.com/go-playground/validator 驗證器用於驗證結構體和個別的數據
 * github.com/gin-contrib/cors 跨域請求的中間件
+* github.com/redis/go-redis/v9 go-redis 是 Redis 客户端库
