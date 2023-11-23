@@ -74,7 +74,7 @@ func Router(quit chan os.Signal) *gin.Engine {
 
 // =================================   no auth group   =====================================
 func CreateUser(router *gin.RouterGroup) {
-	router.POST("/", v1.CreateUser)
+	router.POST("", v1.CreateUser)
 }
 func Login(router *gin.RouterGroup) {
 	router.POST("/login", v1.UserLogin)

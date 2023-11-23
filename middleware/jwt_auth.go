@@ -23,7 +23,9 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			token := jwtToken[1]
 
 			claims, err := jwt_secret.ParseToken(token)
-			c.Set("usersId", claims.UserID)
+			if claims != nil{
+				c.Set("usersId", claims.UserID)
+			}
 			if err != nil {
 				switch err.(*jwt.ValidationError).Errors {
 				case jwt.ValidationErrorExpired:
