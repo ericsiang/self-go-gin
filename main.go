@@ -1,49 +1,60 @@
 package main
 
 import (
+	"api/database/migrate"
 	"api/initialize"
-	"fmt"
+	"api/router"
+	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"strconv"
+	"syscall"
 	"time"
 
-	ginzap "github.com/gin-contrib/zap"
-	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func main() {
-	initialize.InitConfig()
-	r := gin.New()
-	logger := initialize.GetLogger()
-	/* Add a ginzap middleware, which:
-	 * - Logs all requests, like a combined access and error log.
-	 * - Logs to stdout.
-	 * - RFC3339 with UTC time format.
-	 */
-	r.Use(ginzap.Ginzap(logger, "", true))
-
-	/* Logs all panic to error log
-	 *  - stack means whether output the stack info.
-	 */
-	r.Use(ginzap.RecoveryWithZap(logger, true))
-
-	// Example ping request.
-	r.GET("/ping", func(c *gin.Context) {
-		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
-	})
-
-	// Example when panic happen.
-	r.GET("/panic", func(c *gin.Context) {
-		panic("An unexpected error happen!")
-	})
-
-	//記錄 info 級別日志
-	// logger.Info("info 級別日志")
-
-	// //記錄 error 級別日志
-	// logger.Error("error 級別日志")
-
-	// logger.Fatal("fatal 級別日志")
-	// logger.Warn("warn 級別日志")
-
+	initialize.InitSetting()
+	migrate.Migrate() // migrate database
+	quit := make(chan os.Signal, 1)
+	// Set Router
+	router := router.Router(quit)
 	// Listen and Server
-	r.Run(":8888")
+	// serverPort := ":" + strconv.Itoa(initialize.GetServerEnv().GetServerPort())
+	// r.Run(serverPort)
+
+	//優雅的關閉服務(服務端關機命令發出後不會立即關機)
+	//建立一個http.Server
+	srv := &http.Server{
+		Addr:    ":" + strconv.Itoa(initialize.GetServerEnv().GetServerPort()),
+		Handler: router,
+	}
+
+	go func() {
+		//啟動 http.Server
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			zap.S().Error("Server listen : %s\n", err)
+		}
+	}()
+
+	/*
+		監聽等待 SIGINT 或 SIGTERM 信号
+		SIGINT -> 由使用者在終端中按下 Ctrl+C 產生，用於請求進程中斷
+		SIGTERM -> 系統預設的終止信號，當你使用 kill 命令（不帶任何信號選項）
+	*/
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	zap.S().Info("Preparing Shutdown Server ...")
+	//建立超時上下文，Shutdown可以讓未處理的連線在這個時間內關閉
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	//停止HTTP服务器
+	if err := srv.Shutdown(ctx); err != nil {
+		zap.S().Error("Shutdown Error :", err)
+	}
+
+	zap.S().Info("Server exiting")
 }

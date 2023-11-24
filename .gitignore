@@ -1,1 +1,12 @@
 /log/*/*.*
+.vscode/
+.svn
+.gitlab-ci.yml
+script/branch/
+script/trunk/bin/runtime
+script/trunk/bin/game_engine
+bin/
+_*
+*.log
+dist
+*.ini
