@@ -46,7 +46,7 @@ func getFileRotatelogs(filePath string, rotatelogsConfig *RotatelogsConfig) (*ro
 		官方 github 上有說明建議使用 WithRotationCount，要將 MaxAge 設為 -1 比較保險
 	*/
 
-	logf, err := rotatelogs.New(filePath+".%Y%m%d",
+	logf, err := rotatelogs.New(filePath,
 		// rotatelogs.WithLinkName(filePath),      // 生成軟鏈，指向最新日誌文件
 		rotatelogs.WithMaxAge(rotatelogsConfig.MaxAge),                     //保留舊日誌文件的最大天數
 		rotatelogs.WithRotationTime(rotatelogsConfig.RotationTime),         //切割頻率為時間單位
