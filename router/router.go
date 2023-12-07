@@ -1,7 +1,7 @@
 package router
 
 import (
-	"api/api/v1"
+	v1 "api/api/v1"
 	"api/initialize"
 	"api/middleware"
 	"fmt"
@@ -24,18 +24,18 @@ func Router(quit chan os.Signal) *gin.Engine {
 		gin.SetMode(gin.DebugMode)
 	}
 	router := gin.New()
-	logger := initialize.GetZapLogger()
+	zapLogger := initialize.GetZapLogger()
 	/* Add a ginzap middleware, which:
 	 * - Logs all requests, like a combined access and error log.
 	 * - Logs to stdout.
 	 * - RFC3339 with UTC time format.
 	 */
-	router.Use(ginzap.Ginzap(logger, "", true))
+	router.Use(ginzap.Ginzap(zapLogger, "", true))
 
 	/* Logs all panic to error log
 	 *  - stack means whether output the stack info.
 	 */
-	router.Use(ginzap.RecoveryWithZap(logger, true))
+	router.Use(ginzap.RecoveryWithZap(zapLogger, true))
 	router.Use(cors.Default()) //跨域請求的中間件
 
 	//==============================   no auth group   =================================
@@ -57,7 +57,7 @@ func Router(quit chan os.Signal) *gin.Engine {
 		Users(apiV1AuthUsersGroup)
 	}
 	apiV1AuthAdminsGroup := apiV1AuthGroup.Group("/admins")
-	Shutdown(apiV1AuthAdminsGroup,quit)
+	Shutdown(apiV1AuthAdminsGroup, quit)
 
 	// Example when panic happen.
 	// apiV1Group.GET("/panic", func(c *gin.Context) {
@@ -86,8 +86,7 @@ func Users(router *gin.RouterGroup) {
 	router.GET("/:filterUsersId", v1.GetUsersById)
 }
 
-
-func Shutdown(router *gin.RouterGroup ,quit chan os.Signal) {
+func Shutdown(router *gin.RouterGroup, quit chan os.Signal) {
 	router.GET("/shutdown", func(c *gin.Context) {
 		quit <- syscall.SIGINT
 		c.String(200, "shutdown")

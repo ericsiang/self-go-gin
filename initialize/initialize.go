@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
@@ -9,9 +10,9 @@ var (
 )
 
 func InitSetting() {
-	initLogger()
 	initEnv(serverEnv)
 	zap.S().Info("配置信息 : ", serverEnv)
+	gin.SetMode(serverEnv.APP_Mode)
 	initMysql()
 	initRedis()
 	// vaildate 中文化
