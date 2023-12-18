@@ -9,15 +9,30 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"sync"
 	"syscall"
 	"time"
 
 	"go.uber.org/zap"
 )
 
+var wg sync.WaitGroup
+
 func main() {
 	initialize.InitSetting()
 	migrate.Migrate() // migrate database
+	httpServerRun()
+
+	//測試 log 切割
+	// for i := 0; i < 2000; i++ {
+	// 	wg.Add(2)
+	// 	go simpleHttpGet("www.baidu.com")
+	// 	go simpleHttpGet("https://www.baidu.com")
+	// }
+	// wg.Wait()
+}
+
+func httpServerRun() {
 	quit := make(chan os.Signal, 1)
 	// Set Router
 	router := router.Router(quit)
@@ -58,3 +73,4 @@ func main() {
 
 	zap.S().Info("Server exiting")
 }
+

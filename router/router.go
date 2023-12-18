@@ -12,18 +12,10 @@ import (
 	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
-func Router(quit chan os.Signal) *gin.Engine {
-	switch initialize.GetServerEnv().GetServerAppMode() {
-	case "release":
-		gin.SetMode(gin.ReleaseMode)
-	case "debug":
-		gin.SetMode(gin.DebugMode)
-	default:
-		gin.SetMode(gin.DebugMode)
-	}
-	router := gin.New()
+func setMiddlewares(router *gin.Engine) {
 	zapLogger := initialize.GetZapLogger()
 	/* Add a ginzap middleware, which:
 	 * - Logs all requests, like a combined access and error log.
@@ -37,18 +29,39 @@ func Router(quit chan os.Signal) *gin.Engine {
 	 */
 	router.Use(ginzap.RecoveryWithZap(zapLogger, true))
 	router.Use(cors.Default()) //跨域請求的中間件
+}
 
-	//==============================   no auth group   =================================
+func Router(quit chan os.Signal) *gin.Engine {
+	router := gin.New()
+	setMiddlewares(router)
+	setNoAuthRoutes(router)
+	setAuthRoutes(router, quit)
+	return router
+}
 
+func setNoAuthRoutes(router *gin.Engine) {
 	apiV1Group := router.Group("/api/v1")
 	apiV1UsersGroup := apiV1Group.Group("/users")
 	apiV1Group.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
 	})
+	apiV1Group.GET("/logtest", func(c *gin.Context) {
+		test := true
+		if test {
+			zap.L().Info("Logger  Success..",
+				zap.String("GgGGGG", "200"))
+		} else {
+			zap.L().Error(
+				"Logger  Error ..",
+				zap.String("test", "just for test"))	
+		}
+	})
 	CreateUser(apiV1UsersGroup)
 	Login(apiV1UsersGroup)
+}
 
-	//==============================   auth group   =================================
+func setAuthRoutes(router *gin.Engine, quit chan os.Signal) {
+	apiV1Group := router.Group("/api/v1")
 	apiV1AuthGroup := apiV1Group.Group("/auth")
 	apiV1AuthUsersGroup := apiV1AuthGroup.Group("/users")
 	apiV1AuthUsersGroup.Use(middleware.JwtAuthMiddleware())
@@ -58,18 +71,6 @@ func Router(quit chan os.Signal) *gin.Engine {
 	}
 	apiV1AuthAdminsGroup := apiV1AuthGroup.Group("/admins")
 	Shutdown(apiV1AuthAdminsGroup, quit)
-
-	// Example when panic happen.
-	// apiV1Group.GET("/panic", func(c *gin.Context) {
-	// 	panic("An unexpected error happen!")
-	// })
-
-	// logger.Info("info 級別日志")
-	// logger.Error("error 級別日志")
-	// logger.Fatal("fatal 級別日志")
-	// logger.Warn("warn 級別日志"
-
-	return router
 }
 
 // =================================   no auth group   =====================================
