@@ -10,3 +10,5 @@ _*
 *.log
 dist
 *.ini
+/docs
+markdown.md

@@ -6,12 +6,17 @@ import (
 	"api/middleware"
 	"fmt"
 	"os"
+	// "strconv"
 	"syscall"
 	"time"
+
+	_ "api/docs"
 
 	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/zap"
 )
 
@@ -28,19 +33,30 @@ func setMiddlewares(router *gin.Engine) {
 	 *  - stack means whether output the stack info.
 	 */
 	router.Use(ginzap.RecoveryWithZap(zapLogger, true))
-	router.Use(cors.Default()) //跨域請求的中間件
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Content-Type", "Authorization", "Access-Control-Allow-Origin"},
+	})) //跨域請求的中間件
 }
 
 func Router(quit chan os.Signal) *gin.Engine {
 	router := gin.New()
 	setMiddlewares(router)
-	setNoAuthRoutes(router)
-	setAuthRoutes(router, quit)
+	registerSwagger(router)
+	apiV1Group := router.Group("/api/v1")
+	setNoAuthRoutes(apiV1Group)
+	setAuthRoutes(apiV1Group, quit)
 	return router
 }
 
-func setNoAuthRoutes(router *gin.Engine) {
-	apiV1Group := router.Group("/api/v1")
+func registerSwagger(router *gin.Engine) {
+	if gin.Mode() != gin.ReleaseMode {
+		router.GET("/swagger-test/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
+}
+
+func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 	apiV1UsersGroup := apiV1Group.Group("/users")
 	apiV1Group.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
@@ -53,38 +69,45 @@ func setNoAuthRoutes(router *gin.Engine) {
 		} else {
 			zap.L().Error(
 				"Logger  Error ..",
-				zap.String("test", "just for test"))	
+				zap.String("test", "just for test"))
 		}
 	})
-	CreateUser(apiV1UsersGroup)
 	Login(apiV1UsersGroup)
 }
 
-func setAuthRoutes(router *gin.Engine, quit chan os.Signal) {
-	apiV1Group := router.Group("/api/v1")
+func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
 	apiV1AuthGroup := apiV1Group.Group("/auth")
+
+	// Users
 	apiV1AuthUsersGroup := apiV1AuthGroup.Group("/users")
 	apiV1AuthUsersGroup.Use(middleware.JwtAuthMiddleware())
 	{
-		// Users
 		Users(apiV1AuthUsersGroup)
 	}
+
+	// Admins
 	apiV1AuthAdminsGroup := apiV1AuthGroup.Group("/admins")
-	Shutdown(apiV1AuthAdminsGroup, quit)
+	apiV1AuthAdminsGroup.Use(middleware.JwtAuthMiddleware())
+	{
+		Admins(apiV1AuthAdminsGroup,quit)
+	}
 }
 
 // =================================   no auth group   =====================================
-func CreateUser(router *gin.RouterGroup) {
-	router.POST("", v1.CreateUser)
-}
+
 func Login(router *gin.RouterGroup) {
 	router.POST("/login", v1.UserLogin)
 }
 
 // =================================   auth group   =====================================
 func Users(router *gin.RouterGroup) {
-	router.GET("/", v1.GetUsers)
+	router.POST("", v1.CreateUser)
 	router.GET("/:filterUsersId", v1.GetUsersById)
+}
+
+func Admins(router *gin.RouterGroup,quit chan os.Signal){
+	router.GET("/:filterAdminsId", v1.GetAdminsById)
+	Shutdown(router, quit)
 }
 
 func Shutdown(router *gin.RouterGroup, quit chan os.Signal) {

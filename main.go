@@ -18,6 +18,10 @@ import (
 
 var wg sync.WaitGroup
 
+// @title  Self go gin Swagger API
+// @version 1.0
+// @description swagger first example
+// @host localhost:5000
 func main() {
 	initialize.InitSetting()
 	migrate.Migrate() // migrate database
@@ -38,7 +42,7 @@ func httpServerRun() {
 	router := router.Router(quit)
 	// Listen and Server
 	// serverPort := ":" + strconv.Itoa(initialize.GetServerEnv().GetServerPort())
-	// r.Run(serverPort)
+
 
 	//優雅的關閉服務(服務端關機命令發出後不會立即關機)
 	//建立一個http.Server
@@ -73,4 +77,5 @@ func httpServerRun() {
 
 	zap.S().Info("Server exiting")
 }
+
 
