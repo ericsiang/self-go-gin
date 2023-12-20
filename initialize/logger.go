@@ -2,14 +2,14 @@ package initialize
 
 import (
 	"api/common/common_const"
-	"api/util/zapLogger"
+	"api/util/zap_logger"
 	"log"
 
 	"go.uber.org/zap"
 )
 
 func GetZapLogger() *zap.Logger {
-	rotatelogsConfig := &zapLogger.RotatelogsConfig{
+	rotatelogsConfig := &zap_logger.RotatelogsConfig{
 		InfoLogPath:   "log/info/info_%Y-%m-%d.log",
 		ErrorLogPath:  "log/error/error_%Y-%m-%d.log",
 		MaxSize:       common_const.ZapLoggerMaxSize,
@@ -18,7 +18,7 @@ func GetZapLogger() *zap.Logger {
 		RotationTime:  common_const.ZapLoggerRotationTime,
 	}
 
-	zapLogger, err := zapLogger.NewLogger(rotatelogsConfig)
+	zapLogger, err := zap_logger.NewLogger(rotatelogsConfig)
 	if err != nil {
 		log.Fatalln("[logger] GetZapLogger() err : ", err)
 	}
