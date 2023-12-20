@@ -22,6 +22,12 @@ var wg sync.WaitGroup
 // @version 1.0
 // @description swagger first example
 // @host localhost:5000
+// @accept 		json
+// @schemes 	http https
+// @securityDefinitions.apikey	JwtTokenAuth
+// @in			header
+// @name   		Authorization
+// @description Use JWT Token
 func main() {
 	initialize.InitSetting()
 	migrate.Migrate() // migrate database
