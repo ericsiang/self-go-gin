@@ -51,6 +51,16 @@
 
 ```
 
+### package 操作說明
+| package  |
+| -------- |
+| [swagger](./asset/markdown/swagger.md)  |
+| [zap with gin](./asset/markdown/swagger.md)  |
+
+
+
+
+
 ### 使用到的 package
 * github.com/spf13/viper  Viper是一個配置設定文件、環境變量
 * go.uber.org/zap Zap 是一個快速、結構化、級別化的日誌庫，由 Uber 開發
