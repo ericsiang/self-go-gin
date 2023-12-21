@@ -65,7 +65,7 @@
      <tr>
         <td><a href="https://github.com/uber-go/zap" target="_blank">zap</a></td>
         <td>Zap 是一個快速、結構化、級別化的日誌庫，由 Uber 開發</td>
-        <td> - </td>
+        <td> <a href="./asset/markdown/zap.md" target="_blank">open</a>  </td>
     </tr>
     <tr>
         <td><a href="https://github.com/gin-contrib/zap" target="_blank">gin zap middleware</a></td>
