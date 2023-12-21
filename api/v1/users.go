@@ -146,7 +146,7 @@ func UserLogin(context *gin.Context) {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer 用户令牌"
+// @Security JwtTokenAuth
 // @Param filterUsersId path string true "filterUsersId"
 // @Success 200 {string}  "成功"
 // @Failure 400 {string}  "失敗"

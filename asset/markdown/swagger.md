@@ -93,7 +93,7 @@ func registerSwagger(r *gin.Engine) {
 // @host localhost:5000
 // @accept json
 // @schemes http https
-// @securityDefinitions.apikey	ApiKeyAuth
+// @securityDefinitions.apikey	SelfSecurityName
 // @in			header
 // @name   		Authorization
 // @description Use Bearer {token}
@@ -136,7 +136,9 @@ func main() {
 		<td>
             @securityDefinitions.{option}             </td>
     <td>
-        安全機制<br><br>
+        安全機制<br>
+        securityDefinitions 參數格式  [ 自定義的 security_name ] (中間都要空一格)
+        <br>
         option : 
         <br>
             <li>basic</li>
@@ -184,6 +186,7 @@ func main() {
 // @Tags Users
 // @Accept json
 // @Produce json
+// @Security SelfSecurityName
 // @Param request body swagger_docs.DocUsersLogin true "request body"
 // @Success 200 {string} json "{"msg": {"jwt_token": "JWT_TOKEN"},"data": null}"
 // @Failure 400 {string} json "{"msg": {"fail": "帳密錯誤"},"data": null}"
@@ -217,6 +220,14 @@ func UserLogin(context *gin.Context) {
     <tr >
 		<td>@Produce</td>
 		<td>API 回應的 Mime type</td>
+	</tr>
+    <tr >
+		<td>@Security</td>
+		<td>
+        Security 參數格式 [ 自定義的 security_name ] (中間都要空一格)
+        <br> 
+        <br>    
+        在  @securityDefinitions 有設定時，依自定義的參數名稱( security_name ) ，並在有需要 auth security 的 router handle func 才加上此註解，否則不用加(EX:登入的不用加)，這樣就不用每個 router handle func 都要設定 @Param Authorization header string true "Bearer 用户令牌" 的註解，只要輸入一次 auth token 所有有加此註解的都能快速直接自動引用 auth token</td>
 	</tr>
     <tr>
 		<td>@Param</td>
