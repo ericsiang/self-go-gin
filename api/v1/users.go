@@ -72,7 +72,7 @@ func CreateUser(context *gin.Context) {
 		users, err := newUsers.CreateUser()
 		if err != nil {
 			zap.S().Error("CreateUser() User 建立失敗(db fail) :" + err.Error())
-			if mysql_manager.MysqlErrCode(err) == 1062 {
+			if mysql_manager.MysqlErrCode(err) == mysql_manager.DuplicateEntryCode {
 				gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "account is exist"))
 				return
 			}
