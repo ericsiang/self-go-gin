@@ -77,20 +77,17 @@ func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 
 func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
 	apiV1AuthGroup := apiV1Group.Group("/auth")
+	apiV1AuthGroup.Use(middleware.JwtAuthMiddleware())
 
 	// Users
 	apiV1AuthUsersGroup := apiV1AuthGroup.Group("/users")
-	apiV1AuthUsersGroup.Use(middleware.JwtAuthMiddleware())
-	{
-		Users(apiV1AuthUsersGroup)
-	}
+	Users(apiV1AuthUsersGroup)
+	
 
 	// Admins
 	apiV1AuthAdminsGroup := apiV1AuthGroup.Group("/admins")
-	apiV1AuthAdminsGroup.Use(middleware.JwtAuthMiddleware())
-	{
-		Admins(apiV1AuthAdminsGroup,quit)
-	}
+	Admins(apiV1AuthAdminsGroup,quit)
+	
 }
 
 // =================================   no auth group   =====================================

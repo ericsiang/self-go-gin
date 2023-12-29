@@ -6,6 +6,7 @@ import (
 	"api/util/bcryptEncap"
 	"api/util/gin_response"
 	"api/util/jwt_secret"
+	"api/util/mysql_manager"
 	"errors"
 	"net/http"
 
@@ -49,23 +50,16 @@ func CreateUser(context *gin.Context) {
 	var respData responseData
 
 	if err := context.ShouldBindJSON(&data); err != nil {
-		// check := validCheckAndTrans(context, err)
-		// if check {
-		// 	return
-		// }
+		check := validCheckAndTrans(context, err)
+		if check {
+			return
+		}
 		// 非validator.ValidationErrors類型錯誤直接傳回
 		zap.S().Error("CreateUser() User 建立失敗(BindJSON fail) :" + err.Error())
 		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "BindJSON fail"))
 		return
 	}
-
-	_, err := newUsers.GetUsersByAccount(data.Account)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "db GetUsersByAccount fail"))
-		return
-	}
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
+	
 		//密碼加密
 		bcryptPassword, err := bcryptEncap.GenerateFromPassword(data.Password)
 		if err != nil {
@@ -78,6 +72,10 @@ func CreateUser(context *gin.Context) {
 		users, err := newUsers.CreateUser()
 		if err != nil {
 			zap.S().Error("CreateUser() User 建立失敗(db fail) :" + err.Error())
+			if mysql_manager.MysqlErrCode(err) == 1062 {
+				gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "account is exist"))
+				return
+			}
 			gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "db CreateUser fail"))
 			return
 		}
@@ -86,9 +84,7 @@ func CreateUser(context *gin.Context) {
 			Account: users.Account,
 		}
 		gin_response.SuccessResponse(context, http.StatusOK, gin_response.CreateMsg("success", "success"), respData)
-	} else {
-		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "帳號已存在"))
-	}
+
 
 }
 
