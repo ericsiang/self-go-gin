@@ -1,4 +1,4 @@
-package zapLogger
+package zap_logger
 
 import (
 	"errors"

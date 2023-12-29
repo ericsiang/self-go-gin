@@ -51,15 +51,70 @@
 
 ```
 
+
 ### 使用到的 package
-* github.com/spf13/viper  Viper是一個配置設定文件、環境變量
-* go.uber.org/zap Zap 是一個快速、結構化、級別化的日誌庫，由 Uber 開發
-* github.com/gin-contrib/zap  Gin 框架封裝的 zap 日誌中間件
-* github.com/lestrrat-go/file-rotatelogs  Go 語言的日誌文件切割和彙整庫
-* golang.org/x/crypto/bcrypt 字串加密核對
-* gorm.io/gorm Go 語言 ORM 庫，它支持 MySQL、PostgreSQL、SQLite 和 SQL Server 數據庫
-* github.com/go-sql-driver/mysql  MySQL 驅動，連接 MySQL 數據庫
-* github.com/dgrijalva/jwt-go  JSON Web Token (JWT) 庫
-* github.com/go-playground/validator 驗證器用於驗證結構體和個別的數據
-* github.com/gin-contrib/cors 跨域請求的中間件
-* github.com/redis/go-redis/v9 go-redis 是 Redis 客户端库
+<table>
+    <th>package</th>
+    <th>說明</th>
+    <th>操作說明</th>
+    <tr>
+        <td><a href="https://github.com/spf13/viper" target="_blank">viper</a></td>
+        <td>Viper是一個配置設定文件、環境變量</td>
+        <td>-</td>
+    </tr>
+     <tr>
+        <td><a href="https://github.com/uber-go/zap" target="_blank">zap</a></td>
+        <td>Zap 是一個快速、結構化、級別化的日誌庫，由 Uber 開發</td>
+        <td> <a href="./asset/markdown/zap.md" target="_blank">open</a>  </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/gin-contrib/zap" target="_blank">gin zap middleware</a></td>
+        <td>Gin 框架封裝的 zap 日誌中間件</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/lestrrat-go/file-rotatelogs" target="_blank">file-rotatelogs</a></td>
+        <td>Go 語言的日誌文件切割和彙整庫</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/golang/crypto/tree/master" target="_blank">crypto/bcrypt</a></td>
+        <td>字串加密核對</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/go-gorm/gorm" target="_blank">gorm</a></td>
+        <td>Go 語言 ORM 庫，它支持 MySQL、PostgreSQL、SQLite 和 SQL Server 數據庫</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/go-sql-driver/mysql" target="_blank">go-sql-driver/mysql</a></td>
+        <td>MySQL 驅動，連接 MySQL 數據庫</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/dgrijalva/jwt-go" target="_blank">jwt-go</a></td>
+        <td>JSON Web Token (JWT) 庫</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/go-playground/validator" target="_blank">validator</a></td>
+        <td>驗證器用於驗證結構體和個別的數據</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/gin-contrib/cors" target="_blank">cors</a></td>
+        <td>跨域請求的中間件</td>
+        <td> - </td>
+    </tr> 
+    <tr>
+        <td><a href="https://github.com/redis/go-redis/v9" target="_blank">go-redis</a></td>
+        <td>go-redis 是 Redis 客户端库</td>
+        <td> - </td>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/swaggo/gin-swagger" target="_blank">gin-swagger</a></td>
+        <td>gin swagger 產生 API docs</td>
+        <td> <a href="./asset/markdown/swagger.md" target="_blank">open</a> </td>
+    </tr>
+</table>

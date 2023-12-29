@@ -19,11 +19,20 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			message = "token not found"
 			isPass = false
 		} else {
+			if find := strings.Contains(bearerToken, "Bearer "); !find {
+				message = "Bearer token fail"
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"msg": message,
+				})
+	
+				c.Abort()
+				return
+			}
 			jwtToken := strings.Split(bearerToken, " ")
 			token := jwtToken[1]
 
 			claims, err := jwt_secret.ParseToken(token)
-			if claims != nil{
+			if claims != nil {
 				c.Set("usersId", claims.UserID)
 			}
 			if err != nil {
