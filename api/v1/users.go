@@ -1,12 +1,13 @@
 package v1
 
 import (
+	"api/common/common_msg_id"
+	"api/handler"
 	"api/initialize"
 	"api/model"
 	"api/util/bcryptEncap"
 	"api/util/gin_response"
 	"api/util/jwt_secret"
-	"api/util/mysql_manager"
 	"errors"
 	"net/http"
 
@@ -18,7 +19,14 @@ import (
 func validCheckAndTrans(context *gin.Context, err error) (ok bool) {
 	validTrans, ok := initialize.ErrorValidateCheckAndTrans(err)
 	if ok {
-		gin_response.ErrorResponse(context, http.StatusBadRequest, validTrans)
+		var validTransMsgData = make(map[int]string)
+		var i int
+		for _, v := range validTrans  {
+			validTransMsgData[i] = v
+			i++
+		}
+
+		gin_response.ErrorResponse(context, http.StatusBadRequest, "validate fail", common_msg_id.Fail, validTransMsgData)
 		return ok
 	}
 	return false
@@ -55,36 +63,28 @@ func CreateUser(context *gin.Context) {
 			return
 		}
 		// 非validator.ValidationErrors類型錯誤直接傳回
-		zap.S().Error("CreateUser() User 建立失敗(BindJSON fail) :" + err.Error())
-		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "BindJSON fail"))
+		handler.HandlerError(context, common_msg_id.Fail, "CreateUser() BindJSON fail", err, http.StatusBadRequest, nil)
 		return
 	}
-	
-		//密碼加密
-		bcryptPassword, err := bcryptEncap.GenerateFromPassword(data.Password)
-		if err != nil {
-			zap.S().Error("CreateUser() User 建立失敗(bcrypt fail) :" + err.Error())
-			gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "bcrypt GenerateFromPassword fail"))
-			return
-		}
-		newUsers.Account = data.Account
-		newUsers.Password = string(bcryptPassword)
-		users, err := newUsers.CreateUser()
-		if err != nil {
-			zap.S().Error("CreateUser() User 建立失敗(db fail) :" + err.Error())
-			if mysql_manager.MysqlErrCode(err) == mysql_manager.DuplicateEntryCode {
-				gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "account is exist"))
-				return
-			}
-			gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "db CreateUser fail"))
-			return
-		}
-		respData = responseData{
-			UsersId: users.ID,
-			Account: users.Account,
-		}
-		gin_response.SuccessResponse(context, http.StatusOK, gin_response.CreateMsg("success", "success"), respData)
 
+	//密碼加密
+	bcryptPassword, err := bcryptEncap.GenerateFromPassword(data.Password)
+	if err != nil {
+		handler.HandlerError(context, common_msg_id.Fail, "CreateUser() bcrypt fail", err, http.StatusBadRequest, nil)
+		return
+	}
+	newUsers.Account = data.Account
+	newUsers.Password = string(bcryptPassword)
+	users, err := newUsers.CreateUser()
+	if err != nil {
+		handler.HandlerError(context, common_msg_id.Fail, "CreateUser() model CreateUser() fail", err, http.StatusBadRequest, nil)
+		return
+	}
+	respData = responseData{
+		UsersId: users.ID,
+		Account: users.Account,
+	}
+	gin_response.SuccessResponse(context, http.StatusOK, "", respData, common_msg_id.Success)
 
 }
 
@@ -107,33 +107,34 @@ func UserLogin(context *gin.Context) {
 	var data ReceiveData
 	var users model.Users
 	if err := context.ShouldBindJSON(&data); err != nil {
-		validCheckAndTrans(context, err)
+		check := validCheckAndTrans(context, err)
+		if check {
+			return
+		}
 		// 非validator.ValidationErrors類型錯誤直接傳回
-		zap.S().Error("CreateUser() User 建立失敗(BindJSON fail) :" + err.Error())
-		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "BindJSON fail"))
+		handler.HandlerError(context, common_msg_id.Fail, "CreateUser() User 建立失敗(BindJSON fail)", err, http.StatusBadRequest, nil)
 		return
 	}
 
 	user, err := users.GetUsersByAccount(data.Account)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "db GetUsersByAccount fail"))
+		handler.HandlerError(context, common_msg_id.Fail, "UserLogin() model GetUsersByAccount fail", err, http.StatusBadRequest, nil)
 		return
 	}
 
 	//密碼驗證
 	if err := bcryptEncap.CompareHashAndPassword([]byte(user.Password), []byte(data.Password)); err != nil {
-		zap.S().Error("UserLogin() User bcrypt:", err.Error())
-		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "帳密錯誤"))
+		handler.HandlerError(context, common_msg_id.Fail, "UserLogin() User CompareHashAndPassword fail", err, http.StatusBadRequest, gin_response.CreateMsgData("fail", "帳密錯誤"))
 		return
 	}
 
 	jwtToken, err := jwt_secret.GenerateToken(user.ID)
 	if err != nil {
-		gin_response.ErrorResponse(context, http.StatusBadRequest, gin_response.CreateMsg("fail", "jwt GenerateToken fail"))
+		handler.HandlerError(context, common_msg_id.Fail, "UserLogin() User jwt GenerateToken fail", err, http.StatusBadRequest, nil)
 		return
 	}
 
-	gin_response.SuccessResponse(context, http.StatusOK, gin_response.CreateMsg("jwt_token", jwtToken), nil)
+	gin_response.SuccessResponse(context, http.StatusOK, "", gin_response.CreateMsgData("jwt_token", jwtToken), common_msg_id.Success)
 
 }
 
@@ -158,5 +159,7 @@ func GetUsersById(context *gin.Context) {
 	zap.S().Info("usersId :", usersId)
 	data.FilterUsersId = context.Param("filterUsersId")
 	zap.S().Info("filterUsersId :", data)
-	gin_response.SuccessResponse(context, http.StatusOK, gin_response.CreateMsg("GetAdminsById test", "just test"), data)
+
+	gin_response.SuccessResponse(context, http.StatusOK, "", nil, common_msg_id.Success)
+
 }

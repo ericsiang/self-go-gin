@@ -27,7 +27,7 @@ var wg sync.WaitGroup
 // @securityDefinitions.apikey	JwtTokenAuth
 // @in			header
 // @name   		Authorization
-// @description Use JWT Token
+// @description Use Bearer JWT Token
 func main() {
 	initialize.InitSetting()
 	migrate.Migrate() // migrate database

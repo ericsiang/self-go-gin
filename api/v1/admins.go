@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"api/common/common_msg_id"
 	"api/util/gin_response"
 	"net/http"
 
@@ -29,6 +30,6 @@ func GetAdminsById(context *gin.Context) {
 	zap.S().Info("admin_id :", admin_id)
 	data.FilterAdminsId = context.Param("filterAdminsId")
 	zap.S().Info("FilterAdminsId :", data)
-	gin_response.SuccessResponse(context, http.StatusOK, gin_response.CreateMsg("GetAdminsById test", "just test"), data)
 
+	gin_response.SuccessResponse(context, http.StatusOK, "", nil, common_msg_id.Success)
 }

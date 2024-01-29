@@ -1,31 +1,38 @@
 package gin_response
 
-import "github.com/gin-gonic/gin"
+import (
+	"api/common/common_msg_id"
+
+	"github.com/gin-gonic/gin"
+)
 
 type Response struct {
-	Msg  map[string]string      `json:"msg"`
-	Data interface{} `json:"data"`
+	Result common_msg_id.MsgId `json:"result" binding:"required"`
+	Msg    string              `json:"msg"`
+	Data   interface{}         `json:"data"`
 }
 
-func CreateMsg(key,value string) map[string]string {
+func CreateMsgData(key, value string) map[string]string {
 	var msg = make(map[string]string)
 	msg[key] = value
 	return msg
 }
 
-func SuccessResponse(c *gin.Context, statusCode int, msg map[string]string, data interface{}) {
+func SuccessResponse(c *gin.Context, statusCode int, msg string, data interface{}, result common_msg_id.MsgId) {
 	c.JSON(statusCode, Response{
-		Msg:  msg,
-		Data: data,
+		Result: result,
+		Msg:    msg,
+		Data:   data,
 	})
 
 	return
 }
 
-func ErrorResponse(c *gin.Context, statusCode int, msg map[string]string) {
+func ErrorResponse(c *gin.Context, statusCode int, msg string, result common_msg_id.MsgId, errData interface{}) {
 	c.JSON(statusCode, Response{
-		Msg:  msg,
-		Data: nil,
+		Result: result,
+		Msg:    msg,
+		Data:   errData,
 	})
 
 	return
