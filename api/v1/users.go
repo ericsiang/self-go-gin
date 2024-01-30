@@ -3,7 +3,6 @@ package v1
 import (
 	"api/common/common_msg_id"
 	"api/handler"
-	"api/initialize"
 	"api/model"
 	"api/util/bcryptEncap"
 	"api/util/gin_response"
@@ -12,25 +11,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
-
-func validCheckAndTrans(context *gin.Context, err error) (ok bool) {
-	validTrans, ok := initialize.ErrorValidateCheckAndTrans(err)
-	if ok {
-		var validTransMsgData = make(map[int]string)
-		var i int
-		for _, v := range validTrans  {
-			validTransMsgData[i] = v
-			i++
-		}
-
-		gin_response.ErrorResponse(context, http.StatusBadRequest, "validate fail", common_msg_id.Fail, validTransMsgData)
-		return ok
-	}
-	return false
-}
 
 // @Summary  Create Users
 // @Description Create Users
@@ -57,8 +41,8 @@ func CreateUser(context *gin.Context) {
 	var newUsers model.Users
 	var respData responseData
 
-	if err := context.ShouldBindJSON(&data); err != nil {
-		check := validCheckAndTrans(context, err)
+	if err := context.ShouldBindBodyWith(&data, binding.JSON); err != nil {
+		check := handler.ValidCheckAndTrans(context, err)
 		if check {
 			return
 		}
@@ -106,8 +90,8 @@ func UserLogin(context *gin.Context) {
 
 	var data ReceiveData
 	var users model.Users
-	if err := context.ShouldBindJSON(&data); err != nil {
-		check := validCheckAndTrans(context, err)
+	if err := context.ShouldBindBodyWith(&data, binding.JSON); err != nil {
+		check := handler.ValidCheckAndTrans(context, err)
 		if check {
 			return
 		}

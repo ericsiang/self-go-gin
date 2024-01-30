@@ -24,12 +24,12 @@ func initMysql() {
 	if gin.Mode() == gin.ReleaseMode {
 		config = &gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,
-			SkipDefaultTransaction:                   true,
+			// SkipDefaultTransaction:                   true,
 		}
 	} else {
 		config = &gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,
-			SkipDefaultTransaction:                   true,
+			// SkipDefaultTransaction:                   true,
 			Logger:                                   gormZaplogger,
 		}
 	}
