@@ -12,3 +12,4 @@ dist
 *.ini
 /docs
 markdown.md
+tree.md

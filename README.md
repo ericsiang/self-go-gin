@@ -9,15 +9,24 @@
 │   │                          以防 controller 過肥 )
 │   └── v1                  => 區分版本
 │       └── users.go
+├── asset                   => 放置素材檔案
 ├── common 常用宣告放這
 │   └── common_const
-│       └── common_const.go
-├── database database       => DB 操作(ex: migration、seeder) seeder 尚未建立
-│   └── migrate
-│       └── migrate.go      => 執行 migrate 建立資料表
+│   │   └── common_const.go => 設定常數
+│   └── common_msg_id
+│       └── common_msg_id.go=> 定義 response result
+├── database                => DB 操作(ex: migration、seeder)
+│   ├── migrate
+│   │   └── migrate.go      => 執行 migrate 建立資料表
+    └── seeder              => 建立測試資料
+│       ├── common_seeder.go
+│       └── seeder.go       => 在 RunSeeder() 內，控制要建立哪些測試資料
 ├── env.yaml                => 環境設定檔
 ├── go.mod
 ├── go.sum
+├── handler                 => 各種 handler 處理
+│   ├── handleError.go      => 錯誤處理 func
+│   └── handleValidate.go   => 驗證處理 func
 ├── initialize              => init 所有相關檔統一置放在此
 │   ├── config.go            => init 相關 struct 
 │   ├── env.go              => 讀取環境設定檔，使用 viper 
@@ -37,7 +46,7 @@
 ├── model                   => 資料表結構的 struct 跟 DB CRUD 操作置放在此(依需求可再細拆 repository 層)
 │   ├── gormModel.go        => gorm struct 基本欄位
 │   ├── model_setting.go    => 取得 DB 連線 
-│   └── users.go
+│   └── users.go            => user example
 ├── router                  => 置放 API 路徑
 │   └── router.go
 ├── test                    => 置放測試檔
@@ -46,8 +55,16 @@
     │   └── bcrypt.go
     ├── gin_response        => 統一 response 輸出格式
     │   └── gin_response.go
-    └── jwt_secret          => jwt 操作
-        └── jwt_secret.go
+    ├── jwt_secret          => jwt 操作
+    │   └── jwt_secret.go          
+    ├── mysql_manager       => mysql 
+    │   └── mysql_err_code.go
+    ├── swagger_docs        => swagger docs 使用
+    │   └── swag_params.go
+    ├── track_time          => 計算 func 程式時間
+    │   └── track_time.go
+    └── zap_logger          => zap plugin
+        └── zapLogger.go    
 
 ```
 
