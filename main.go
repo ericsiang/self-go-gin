@@ -10,14 +10,13 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
-	"sync"
 	"syscall"
 	"time"
 
 	"go.uber.org/zap"
 )
 
-var wg sync.WaitGroup
+// var wg sync.WaitGroup
 
 // @title  Self go gin Swagger API
 // @version 1.0

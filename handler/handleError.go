@@ -14,11 +14,9 @@ import (
 func HandlerError(context *gin.Context, msgId common_msg_id.MsgId, errMsg string, err error, statusCode int,errData interface{}) {
 	if mysql_manager.MysqlErrCode(err) == mysql_manager.DuplicateEntryCode {
 		gin_response.ErrorResponse(context, http.StatusBadRequest, "", common_msg_id.Duplicate_Entry, nil)
-		return
 	}
 	if err == gorm.ErrRecordNotFound {
 		gin_response.ErrorResponse(context, http.StatusBadRequest, "", common_msg_id.No_Content, nil)
-		return
 	}
 	if err != nil {
 		zap.L().Error(errMsg + " : " + err.Error())
@@ -27,5 +25,4 @@ func HandlerError(context *gin.Context, msgId common_msg_id.MsgId, errMsg string
 	}
 
 	gin_response.ErrorResponse(context, statusCode, "", msgId, errData)
-	return
 }

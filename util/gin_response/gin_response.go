@@ -24,8 +24,6 @@ func SuccessResponse(c *gin.Context, statusCode int, msg string, data interface{
 		Msg:    msg,
 		Data:   data,
 	})
-
-	return
 }
 
 func ErrorResponse(c *gin.Context, statusCode int, msg string, result common_msg_id.MsgId, errData interface{}) {
@@ -34,6 +32,4 @@ func ErrorResponse(c *gin.Context, statusCode int, msg string, result common_msg
 		Msg:    msg,
 		Data:   errData,
 	})
-
-	return
 }

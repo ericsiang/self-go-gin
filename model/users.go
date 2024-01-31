@@ -2,8 +2,8 @@ package model
 
 type Users struct {
 	GormModel
-	Account  string `gorm:"type:varchar(255);not null;uniqueIndex" json: "account" binding:"required"`
-	Password string `gorm:"type:varchar(255);not null" json: "password" binding:"required"`
+	Account  string `gorm:"type:varchar(255);not null;uniqueIndex;" json:"account" binding:"required"`
+	Password string `gorm:"type:varchar(255);not null;" json:"password" binding:"required"`
 }
 
 func (model Users) CreateUser() (Users, error) {
