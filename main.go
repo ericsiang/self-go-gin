@@ -53,7 +53,7 @@ func httpServerRun() {
 	//優雅的關閉服務(服務端關機命令發出後不會立即關機)
 	//建立一個http.Server
 	srv := &http.Server{
-		Addr:    ":" + strconv.Itoa(initialize.GetServerEnv().GetServerPort()),
+		Addr:    ":" + strconv.Itoa(initialize.GetServerEnv().Port),
 		Handler: router,
 	}
 

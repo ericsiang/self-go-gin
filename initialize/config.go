@@ -31,23 +31,3 @@ type ServerConfig struct {
 	Redis    RedisConfig   `mapstructure:"Redis" json:"Redis"`
 	MongoDB  MongoDBConfig `mapstructure:"MongoDB" json:"MongoDB"`
 }
-
-func (s *ServerConfig) GetServerPort() int {
-	return s.Port
-}
-
-func (s *ServerConfig) GetServerAppMode() string {
-	return s.APP_Mode
-}
-
-func (s *ServerConfig) GetServerMysqlConfig() MysqlConfig {
-	return s.MysqlDB
-}
-
-func (s *ServerConfig) GetServerRedisConfig() RedisConfig {
-	return s.Redis
-}
-
-func (s *ServerConfig) GetServerMongoDBConfig() MongoDBConfig {
-	return s.MongoDB
-}
