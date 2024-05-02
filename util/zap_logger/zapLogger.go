@@ -3,6 +3,7 @@ package zap_logger
 import (
 	"errors"
 	"os"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,12 +32,12 @@ func NewLogger(rotatelogsConfig *RotatelogsConfig) (*Logger, error) {
 	}
 
 	zap.ReplaceGlobals(zapLogger) //使用全局logger(設定了在其他地方調用 zap.S() or zap.L() 才會生效)
-	defer func(){
-		err :=zapLogger.Sync()        // zap底层有缓冲。在任何情况下执行 defer logger.Sync() 是一个很好的习惯
-		if err != nil {
+	defer func() {
+		err := zapLogger.Sync() // zap底层有缓冲。在任何情况下执行 defer logger.Sync() 是一个很好的习惯
+		if err != nil && (!errors.Is(err, syscall.EBADF) && !errors.Is(err, syscall.ENOTTY)) {
 			panic(err)
 		}
-	}() 
+	}()
 	return &Logger{zapLogger: zapLogger}, nil
 }
 
@@ -60,9 +61,9 @@ func getFileRotatelogs(filePath string, rotatelogsConfig *RotatelogsConfig) (*ro
 		rotatelogs.WithHandler(rotatelogs.HandlerFunc(func(e rotatelogs.Event) {
 			// 在這裡添加你的自定義操作
 			// if e.Type() == rotatelogs.FileRotatedEventType {
-				// 這裡的代碼將在每次日誌切割時執行
-				// e.(*rotatelogs.FileRotatedEvent).PrevFile() 是上一個日誌文件的路徑
-				// e.(*rotatelogs.FileRotatedEvent).CurrentFile() 是當前日誌文件的路徑
+			// 這裡的代碼將在每次日誌切割時執行
+			// e.(*rotatelogs.FileRotatedEvent).PrevFile() 是上一個日誌文件的路徑
+			// e.(*rotatelogs.FileRotatedEvent).CurrentFile() 是當前日誌文件的路徑
 			// }
 
 		})),
