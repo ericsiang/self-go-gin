@@ -2,8 +2,6 @@ module api
 
 go 1.21
 
-toolchain go1.21.6
-
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.4.0
