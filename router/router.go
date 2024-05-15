@@ -6,6 +6,7 @@ import (
 	"api/middleware"
 	"fmt"
 	"os"
+
 	// "strconv"
 	"syscall"
 	"time"
@@ -20,7 +21,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func setMiddlewares(router *gin.Engine) {
+func setDefaultMiddlewares(router *gin.Engine) {
 	zapLogger := initialize.GetZapLogger()
 	/* Add a ginzap middleware, which:
 	 * - Logs all requests, like a combined access and error log.
@@ -42,7 +43,7 @@ func setMiddlewares(router *gin.Engine) {
 
 func Router(quit chan os.Signal) *gin.Engine {
 	router := gin.New()
-	setMiddlewares(router)
+	setDefaultMiddlewares(router)
 	registerSwagger(router)
 	apiV1Group := router.Group("/api/v1")
 	setNoAuthRoutes(apiV1Group)
@@ -58,9 +59,10 @@ func registerSwagger(router *gin.Engine) {
 
 func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 	apiV1UsersGroup := apiV1Group.Group("/users")
-	apiV1Group.GET("/ping", func(c *gin.Context) {
+	apiV1Group.Use(middleware.RateLimit("test-limit")).GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
 	})
+
 	apiV1Group.GET("/logtest", func(c *gin.Context) {
 		test := true
 		if test {
@@ -82,12 +84,11 @@ func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
 	// Users
 	apiV1AuthUsersGroup := apiV1AuthGroup.Group("/users")
 	Users(apiV1AuthUsersGroup)
-	
 
 	// Admins
 	apiV1AuthAdminsGroup := apiV1AuthGroup.Group("/admins")
-	Admins(apiV1AuthAdminsGroup,quit)
-	
+	Admins(apiV1AuthAdminsGroup, quit)
+
 }
 
 // =================================   no auth group   =====================================
@@ -102,7 +103,7 @@ func Users(router *gin.RouterGroup) {
 	router.GET("/:filterUsersId", v1.GetUsersById)
 }
 
-func Admins(router *gin.RouterGroup,quit chan os.Signal){
+func Admins(router *gin.RouterGroup, quit chan os.Signal) {
 	router.GET("/:filterAdminsId", v1.GetAdminsById)
 	Shutdown(router, quit)
 }
