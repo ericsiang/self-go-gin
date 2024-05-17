@@ -1,13 +1,13 @@
-package track_time_test
+package time_test
 
 import (
-	"api/util/track_time"
+	"api/util/time_relate"
 	"testing"
 	"time"
 )
 
 func TestTrackTime(t *testing.T) {
-	defer track_time.TrackTime(time.Now())
+	defer time_relate.TrackTime(time.Now())
 
 	time.Sleep(1 * time.Second)
 }

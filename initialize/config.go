@@ -24,6 +24,11 @@ type RedisConfig struct {
 	Password string `mapstructure:"password" json:"password"`
 }
 
+type KafkaConfig struct {
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+}
+
 type ServerConfig struct {
 	APP_Mode string        `mapstructure:"APP_Mode" json:"APP_Mode"`
 	Port     int           `mapstructure:"Port" json:"Port"`
