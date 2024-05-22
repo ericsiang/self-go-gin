@@ -1,14 +1,14 @@
 package kafka
 
 import (
+	"time"
+
 	"github.com/IBM/sarama"
 )
 
-
-
-
 func getConf() *sarama.Config {
 	config := sarama.NewConfig()
+	config.Version = sarama.V3_6_0_0
 	// 生產訊息後是否需要通知生產者
 	// 同步模式會直接傳回
 
@@ -21,6 +21,10 @@ func getConf() *sarama.Config {
 	// 非同步模式會回到Successes和Errors通道中
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
+
+	// 配置开启自动提交 offset，这样 samara 库会定时帮我们把最新的 offset 信息提交给 kafka
+	config.Consumer.Offsets.AutoCommit.Enable = true              // 开启自动 commit offset
+	config.Consumer.Offsets.AutoCommit.Interval = 1 * time.Second // 自动 commit时间间隔
 	return config
 }
 
@@ -32,6 +36,3 @@ func NewClient(addr []string) sarama.Client {
 	}
 	return client
 }
-
-
-

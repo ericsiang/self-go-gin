@@ -58,6 +58,7 @@ func (c consumerStruct) getConsumePartition(topic string, partition int32, handl
 		fmt.Printf("Consumer listen get partition, err:%v\n", err)
 		return err
 	}
+
 	// 啟用一個協程，持續監聽佇列中的數據，佇列中的資料會透過 Messages 發過來
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
@@ -65,11 +66,14 @@ func (c consumerStruct) getConsumePartition(topic string, partition int32, handl
 		select {
 		case msg := <-consumePartition.Messages():
 			fmt.Printf("接收topic=%s, partition=%d, offset=%d, value=%s\n", msg.Topic, msg.Partition, msg.Offset, msg.Value)
-			// if handler(msg.Value) {
-			// 	break
+			// value = msg.Value
+			// if handler(value) {
+
 			// }
+			break
 		case <-quit:
 			fmt.Println("stop listen consumer")
+			os.Exit(2)
 			break
 		}
 	}
