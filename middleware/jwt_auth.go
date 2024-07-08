@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"api/util/jwt_secret"
+	"errors"
 	"net/http"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func JwtAuthMiddleware() gin.HandlerFunc {
@@ -24,7 +25,7 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 				c.JSON(http.StatusUnauthorized, gin.H{
 					"msg": message,
 				})
-	
+
 				c.Abort()
 				return
 			}
@@ -35,9 +36,10 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			if claims != nil {
 				c.Set("usersId", claims.UserID)
 			}
+
 			if err != nil {
-				switch err.(*jwt.ValidationError).Errors {
-				case jwt.ValidationErrorExpired:
+				switch {
+				case errors.Is(err, jwt.ErrTokenExpired):
 					message = "token expired"
 					isPass = false
 				default:

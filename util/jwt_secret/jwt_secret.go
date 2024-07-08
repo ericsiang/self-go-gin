@@ -3,14 +3,14 @@ package jwt_secret
 import (
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 var jwtSecret []byte
 
 type Claims struct {
 	UserID uint `json:"user_id"`
-	jwt.StandardClaims
+	jwt.MapClaims
 }
 
 // GenerateToken 根據用戶的用戶id 生成JWT token
@@ -20,9 +20,9 @@ func GenerateToken(userId uint) (string, error) {
 
 	claims := Claims{
 		userId,
-		jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(),
-			Issuer:    "gin-blog",
+		jwt.MapClaims{
+			"exp": expireTime.Unix(),
+			"iss":   "gin-blog",
 		},
 	}
 
