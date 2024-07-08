@@ -25,6 +25,7 @@ func initEnv(serverConfig *ServerConfig) {
 	}
 	v.WatchConfig() // 監聽 env file
 	v.OnConfigChange(func(e fsnotify.Event) {
+		InitSetting()
 		fmt.Println("Config file changed:", e.Name)
 	})
 }
