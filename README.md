@@ -110,7 +110,7 @@
         <td> - </td>
     </tr>
     <tr>
-        <td><a href="https://github.com/dgrijalva/jwt-go" target="_blank">jwt-go</a></td>
+        <td><a href="https://github.com/golang-jwt/jwt" target="_blank">golang-jwt</a></td>
         <td>JSON Web Token (JWT) 庫</td>
         <td> - </td>
     </tr>
