@@ -134,4 +134,9 @@
         <td>gin swagger 產生 API docs</td>
         <td> <a href="./asset/markdown/swagger.md" target="_blank">open</a> </td>
     </tr>
+    <tr>
+        <td><a href="https://github.com/chenjiandongx/ginprom" target="_blank">ginprom</a></td>
+        <td>gin 串接 prometheus 的 middleware</td>
+        <td> - </td>
+    </tr>
 </table>

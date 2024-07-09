@@ -13,9 +13,11 @@ import (
 
 	_ "api/docs"
 
+	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/zap"
@@ -39,6 +41,10 @@ func setDefaultMiddlewares(router *gin.Engine) {
 		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:    []string{"Content-Type", "Authorization", "Access-Control-Allow-Origin"},
 	})) //跨域請求的中間件
+
+	// prometheus middleware
+	router.Use(ginprom.PromMiddleware(nil))
+	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
 }
 
 func Router(quit chan os.Signal) *gin.Engine {
