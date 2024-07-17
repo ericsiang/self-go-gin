@@ -30,7 +30,7 @@ func initMysql() {
 		config = &gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,
 			// SkipDefaultTransaction:                   true,
-			Logger:                                   gormZaplogger,
+			Logger: gormZaplogger,
 		}
 	}
 

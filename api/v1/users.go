@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"api/common/common_const"
 	"api/common/common_msg_id"
 	"api/handler"
 	"api/model"
@@ -51,25 +52,34 @@ func CreateUser(context *gin.Context) {
 		return
 	}
 
-	//密碼加密
-	bcryptPassword, err := bcryptEncap.GenerateFromPassword(data.Password)
-	if err != nil {
-		handler.HandlerError(context, common_msg_id.Fail, "CreateUser() bcrypt fail", err, http.StatusBadRequest, nil)
+	_, err := newUsers.GetUsersByAccount(data.Account)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		gin_response.ErrorResponse(context, http.StatusBadRequest, "db GetUsersByAccount fail", common_msg_id.Fail, err)
 		return
 	}
-	newUsers.Account = data.Account
-	newUsers.Password = string(bcryptPassword)
-	users, err := newUsers.CreateUser()
-	if err != nil {
-		handler.HandlerError(context, common_msg_id.Fail, "CreateUser() model CreateUser() fail", err, http.StatusBadRequest, nil)
-		return
-	}
-	respData = responseData{
-		UsersId: users.ID,
-		Account: users.Account,
-	}
-	gin_response.SuccessResponse(context, http.StatusOK, "", respData, common_msg_id.Success)
 
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		//密碼加密
+		bcryptPassword, err := bcryptEncap.GenerateFromPassword(data.Password)
+		if err != nil {
+			handler.HandlerError(context, common_msg_id.Fail, "CreateUser() bcrypt fail", err, http.StatusBadRequest, nil)
+			return
+		}
+		newUsers.Account = data.Account
+		newUsers.Password = string(bcryptPassword)
+		users, err := newUsers.CreateUser()
+		if err != nil {
+			handler.HandlerError(context, common_msg_id.Fail, "CreateUser() model CreateUser() fail", err, http.StatusBadRequest, nil)
+			return
+		}
+		respData = responseData{
+			UsersId: users.ID,
+			Account: users.Account,
+		}
+		gin_response.SuccessResponse(context, http.StatusOK, "", respData, common_msg_id.Success)
+	} else {
+		gin_response.ErrorResponse(context, http.StatusBadRequest, "帳號已存在", common_msg_id.Fail, nil)
+	}
 }
 
 // @Summary  User Login
@@ -111,8 +121,8 @@ func UserLogin(context *gin.Context) {
 		handler.HandlerError(context, common_msg_id.Fail, "UserLogin() User CompareHashAndPassword fail", err, http.StatusBadRequest, gin_response.CreateMsgData("fail", "帳密錯誤"))
 		return
 	}
-
-	jwtToken, err := jwt_secret.GenerateToken(user.ID)
+	zap.S().Info("user.ID:",user.ID)
+	jwtToken, err := jwt_secret.GenerateToken(common_const.LoginUser,user.ID)
 	if err != nil {
 		handler.HandlerError(context, common_msg_id.Fail, "UserLogin() User jwt GenerateToken fail", err, http.StatusBadRequest, nil)
 		return

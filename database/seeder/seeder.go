@@ -11,6 +11,7 @@ type Seeder struct {
 func RunSeeder() {
 	//common_seeder
 	// CreateUser()
+	// CreateAdmin()
 }
 
 func NewSeeder(db *gorm.DB) *Seeder {

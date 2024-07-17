@@ -25,9 +25,10 @@ type RedisConfig struct {
 }
 
 type ServerConfig struct {
-	APP_Mode string        `mapstructure:"APP_Mode" json:"APP_Mode"`
-	Port     int           `mapstructure:"Port" json:"Port"`
-	MysqlDB  MysqlConfig   `mapstructure:"Mysql" json:"Mysql"`
-	Redis    RedisConfig   `mapstructure:"Redis" json:"Redis"`
-	MongoDB  MongoDBConfig `mapstructure:"MongoDB" json:"MongoDB"`
+	APP_Mode  string        `mapstructure:"APP_Mode" json:"APP_Mode"`
+	Port      int           `mapstructure:"Port" json:"Port"`
+	JwtSecret string        `mapstructure:"JwtSecret" json:"JwtSecret"`
+	MysqlDB   MysqlConfig   `mapstructure:"Mysql" json:"Mysql"`
+	Redis     RedisConfig   `mapstructure:"Redis" json:"Redis"`
+	MongoDB   MongoDBConfig `mapstructure:"MongoDB" json:"MongoDB"`
 }

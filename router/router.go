@@ -59,6 +59,8 @@ func registerSwagger(router *gin.Engine) {
 
 func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 	apiV1UsersGroup := apiV1Group.Group("/users")
+	apiV1AdminsGroup := apiV1Group.Group("/admins")
+
 	apiV1Group.Use(middleware.RateLimit("test-limit")).GET("/limit_ping", func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
 	})
@@ -74,7 +76,8 @@ func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 				zap.String("test", "just for test"))
 		}
 	})
-	Login(apiV1UsersGroup)
+	Login(apiV1UsersGroup, apiV1AdminsGroup)
+
 }
 
 func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
@@ -93,8 +96,9 @@ func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
 
 // =================================   no auth group   =====================================
 
-func Login(router *gin.RouterGroup) {
-	router.POST("/login", v1.UserLogin)
+func Login(userRouter,adminRouter *gin.RouterGroup) {
+	userRouter.POST("/login", v1.UserLogin)
+	adminRouter.POST("/login", v1.AdminLogin)
 }
 
 // =================================   auth group   =====================================
