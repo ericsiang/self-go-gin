@@ -1,13 +1,12 @@
-package bcryptEncap_test
+package bcryptEncap
 
 import (
-	"api/util/bcryptEncap"
 	"testing"
 )
 
 func TestGenerateFromPassword(t *testing.T) {
 	password := "testPassword"
-	hash, err := bcryptEncap.GenerateFromPassword(password)
+	hash, err := GenerateFromPassword(password)
 	if err != nil {
 		t.Fatalf("Failed to generate hash from password: %v", err)
 	}
@@ -19,9 +18,9 @@ func TestGenerateFromPassword(t *testing.T) {
 
 func TestCompareHashAndPassword(t *testing.T) {
 	password := "testPassword"
-	hash, _ := bcryptEncap.GenerateFromPassword(password)
+	hash, _ := GenerateFromPassword(password)
 
-	err := bcryptEncap.CompareHashAndPassword(hash, []byte(password))
+	err := CompareHashAndPassword(hash, []byte(password))
 	if err != nil {
 		t.Fatalf("Failed to compare hash and password: %v", err)
 	}

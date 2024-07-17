@@ -1,7 +1,6 @@
-package zapLogger_test
+package zap_logger
 
 import (
-	"api/util/zap_logger"
 	"testing"
 	"time"
 )
@@ -9,7 +8,7 @@ import (
 func TestNewLogger(t *testing.T) {
 	// MaxAge and RotationCount cannot be both set  兩者不能同時設置
 	// 官方 github 上有說明建議使用 WithRotationCount，要將 MaxAge 設為 -1 比較保險
-	config := &zap_logger.RotatelogsConfig{
+	config := &RotatelogsConfig{
 		InfoLogPath:   "./info.log",
 		ErrorLogPath:  "./error.log",
 		MaxSize:       1024,
@@ -18,7 +17,7 @@ func TestNewLogger(t *testing.T) {
 		RotationTime:  24 * time.Hour,
 	}
 
-	logger, err := zap_logger.NewLogger(config)
+	logger, err := NewLogger(config)
 	if err != nil {
 		t.Fatalf("Failed to create new logger TestNewLogger() error : %v", err)
 	}
