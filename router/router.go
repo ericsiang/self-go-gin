@@ -59,7 +59,7 @@ func registerSwagger(router *gin.Engine) {
 
 func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 	apiV1UsersGroup := apiV1Group.Group("/users")
-	apiV1Group.Use(middleware.RateLimit("test-limit")).GET("/ping", func(c *gin.Context) {
+	apiV1Group.Use(middleware.RateLimit("test-limit")).GET("/limit_ping", func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
 	})
 
