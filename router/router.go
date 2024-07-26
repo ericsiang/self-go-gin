@@ -64,6 +64,9 @@ func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 	apiV1Group.Use(middleware.RateLimit("test-limit")).GET("/limit_ping", func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
 	})
+	apiV1Group.Use(middleware.OpaMiddleware()).GET("/opa_ping", func(c *gin.Context) {
+		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
+	})
 
 	apiV1Group.GET("/logtest", func(c *gin.Context) {
 		test := true
