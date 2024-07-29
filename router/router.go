@@ -14,6 +14,7 @@ import (
 	_ "api/docs"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/pprof"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -79,6 +80,7 @@ func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 				zap.String("test", "just for test"))
 		}
 	})
+	pprof.Register(apiV1AdminsGroup)
 	Login(apiV1UsersGroup, apiV1AdminsGroup)
 
 }
@@ -99,7 +101,7 @@ func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
 
 // =================================   no auth group   =====================================
 
-func Login(userRouter,adminRouter *gin.RouterGroup) {
+func Login(userRouter, adminRouter *gin.RouterGroup) {
 	userRouter.POST("/login", v1.UserLogin)
 	adminRouter.POST("/login", v1.AdminLogin)
 }

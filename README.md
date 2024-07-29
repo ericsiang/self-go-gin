@@ -134,4 +134,9 @@
         <td>gin swagger 產生 API docs</td>
         <td> <a href="./asset/markdown/swagger.md" target="_blank">open</a> </td>
     </tr>
+    <tr>
+        <td><a href="https://github.com/gin-contrib/pprof" target="_blank">gin-pprof</a></td>
+        <td>gin-pprof</td>
+        <td> - </td>
+    </tr>
 </table>
