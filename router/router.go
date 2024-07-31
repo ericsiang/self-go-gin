@@ -46,9 +46,13 @@ func Router(quit chan os.Signal) *gin.Engine {
 	router := gin.New()
 	setDefaultMiddlewares(router)
 	registerSwagger(router)
+	if  gin.Mode() != gin.ReleaseMode  {
+		pprof.Register(router)
+	}
 	apiV1Group := router.Group("/api/v1")
 	setNoAuthRoutes(apiV1Group)
 	setAuthRoutes(apiV1Group, quit)
+	
 	return router
 }
 
@@ -80,9 +84,7 @@ func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 				zap.String("test", "just for test"))
 		}
 	})
-	pprof.Register(apiV1AdminsGroup)
 	Login(apiV1UsersGroup, apiV1AdminsGroup)
-
 }
 
 func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
