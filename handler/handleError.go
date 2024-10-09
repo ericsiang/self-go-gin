@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func HandlerError(context *gin.Context, msgId common_msg_id.MsgId, errMsg string, err error, statusCode int,errData interface{}) {
+func HandlerError(context *gin.Context, msgId common_msg_id.MsgId, errMsg string, err error, statusCode int, errData interface{}) {
 	if mysql_manager.MysqlErrCode(err) == mysql_manager.DuplicateEntryCode {
 		gin_response.ErrorResponse(context, http.StatusBadRequest, "", common_msg_id.Duplicate_Entry, nil)
 	}

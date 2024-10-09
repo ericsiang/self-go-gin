@@ -121,8 +121,8 @@ func UserLogin(context *gin.Context) {
 		handler.HandlerError(context, common_msg_id.Fail, "UserLogin() User CompareHashAndPassword fail", err, http.StatusBadRequest, gin_response.CreateMsgData("fail", "帳密錯誤"))
 		return
 	}
-	zap.S().Info("user.ID:",user.ID)
-	jwtToken, err := jwt_secret.GenerateToken(common_const.LoginUser,user.ID)
+	zap.S().Info("user.ID:", user.ID)
+	jwtToken, err := jwt_secret.GenerateToken(common_const.LoginUser, user.ID)
 	if err != nil {
 		handler.HandlerError(context, common_msg_id.Fail, "UserLogin() User jwt GenerateToken fail", err, http.StatusBadRequest, nil)
 		return

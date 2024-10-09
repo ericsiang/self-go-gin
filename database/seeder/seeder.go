@@ -21,8 +21,3 @@ func NewSeeder(db *gorm.DB) *Seeder {
 func (s *Seeder) Clear(tableName string) error {
 	return s.db.Exec("truncate table " + tableName).Error
 }
-
-
-
-
-

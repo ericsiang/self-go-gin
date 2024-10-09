@@ -9,10 +9,10 @@ import (
 
 func TestLimitPing(t *testing.T) {
 	get, err := http.Get("http://127.0.0.1:5000/api/v1/limit_ping")
-	if err != nil{
+	if err != nil {
 		t.Error(err)
 	}
-	if get.StatusCode != http.StatusOK{
+	if get.StatusCode != http.StatusOK {
 		t.Error("http StatusCode not 200 ")
 	}
 }

@@ -43,13 +43,13 @@ func initValidateLang(local string) (err error) {
 	return
 }
 
-func ErrorValidateCheckAndTrans(err error) (translateErrs validator.ValidationErrorsTranslations,ok bool) {
+func ErrorValidateCheckAndTrans(err error) (translateErrs validator.ValidationErrorsTranslations, ok bool) {
 	// 取得validator.ValidationErrors類型的errors，
 	validErrs, ok := err.(validator.ValidationErrors)
-	if ok {  //是validator.ValidationErrors類型錯誤則進行翻譯
+	if ok { //是validator.ValidationErrors類型錯誤則進行翻譯
 		translateErrs = validErrs.Translate(trans)
-		return translateErrs,true
+		return translateErrs, true
 	}
 
-	return nil,false
+	return nil, false
 }

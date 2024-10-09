@@ -40,7 +40,7 @@ func TestParseToken(t *testing.T) {
 
 func TestParseInvalidToken(t *testing.T) {
 	SetJwtSecret("your_secret_key")
-	invalidJwtToken :="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjowLCJhZG1pbl9pZCI6MSwiTWFwQ2xhaW1zIjp7ImV4cCI6MTcyMTIwNzI1MywiaXNzIjoiZ2luLWJsb2cifX0.y4Ku16plzvIUUPoCnF08xSG9JAOFgijv83ZNerxjjjo"
+	invalidJwtToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjowLCJhZG1pbl9pZCI6MSwiTWFwQ2xhaW1zIjp7ImV4cCI6MTcyMTIwNzI1MywiaXNzIjoiZ2luLWJsb2cifX0.y4Ku16plzvIUUPoCnF08xSG9JAOFgijv83ZNerxjjjo"
 	_, err := ParseToken(invalidJwtToken)
 	if err == nil {
 		t.Error("Expected error parsing invalid token, but got nil")

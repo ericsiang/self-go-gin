@@ -20,7 +20,7 @@ func RateLimit(redis_limit_key string) gin.HandlerFunc {
 			})
 			return
 		}
-	
+
 		if res.Allowed == 0 {
 			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
 				"msg": "Too many requests",

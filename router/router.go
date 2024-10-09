@@ -99,7 +99,7 @@ func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
 
 // =================================   no auth group   =====================================
 
-func Login(userRouter,adminRouter *gin.RouterGroup) {
+func Login(userRouter, adminRouter *gin.RouterGroup) {
 	userRouter.POST("/login", v1.UserLogin)
 	adminRouter.POST("/login", v1.AdminLogin)
 }

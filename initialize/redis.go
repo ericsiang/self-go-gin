@@ -12,7 +12,7 @@ var redisClient *redis.Client
 
 func initRedis() *redis.Client {
 	redisConfig := GetServerEnv().Redis
-	redisAddr := redisConfig.Host +":"+ strconv.Itoa(redisConfig.Port)
+	redisAddr := redisConfig.Host + ":" + strconv.Itoa(redisConfig.Port)
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
 		Password: redisConfig.Password,
@@ -20,7 +20,7 @@ func initRedis() *redis.Client {
 	})
 
 	ctx := context.Background()
-	if err := redisClient.Ping(ctx).Err();err != nil {
+	if err := redisClient.Ping(ctx).Err(); err != nil {
 		zap.S().Error("redis connect failed, err:%v\n", err.Error())
 		panic(err)
 	}
@@ -29,7 +29,6 @@ func initRedis() *redis.Client {
 
 	return redisClient
 }
-
 
 func GetRedisClient() *redis.Client {
 	return redisClient

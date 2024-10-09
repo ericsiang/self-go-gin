@@ -33,9 +33,9 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			token := jwtToken[1]
 
 			claims, err := jwt_secret.ParseToken(token)
-		
+
 			if claims != nil {
-				if claims.UserID == 0 && claims.AdminID == 0{
+				if claims.UserID == 0 && claims.AdminID == 0 {
 					message = "jwt data fail"
 					isPass = false
 				}
