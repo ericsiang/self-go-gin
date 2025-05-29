@@ -1,7 +1,7 @@
 package jwt_secret
 
 import (
-	"api/common/common_const"
+	"self_go_gin/common/common_const"
 	"testing"
 )
 

@@ -1,9 +1,9 @@
 package seeder
 
 import (
-	"api/initialize"
-	"api/model"
-	"api/util/bcryptEncap"
+	"self_go_gin/initialize"
+	"self_go_gin/model"
+	"self_go_gin/util/bcryptEncap"
 	"strconv"
 )
 
@@ -13,7 +13,7 @@ func CreateUser() {
 	if err := seeder.Clear("users"); err != nil {
 		panic(err)
 	}
-	var users []*model.Users
+	var users []*model.User
 	//密碼加密
 	bcryptPassword, err := bcryptEncap.GenerateFromPassword("123456")
 	if err != nil {
@@ -21,7 +21,7 @@ func CreateUser() {
 	}
 
 	for i := 1; i < 4; i++ {
-		users = append(users, &model.Users{
+		users = append(users, &model.User{
 			Account:  "user" + strconv.Itoa(i),
 			Password: string(bcryptPassword),
 		})

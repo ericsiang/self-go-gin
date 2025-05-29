@@ -1,7 +1,7 @@
 package gin_response
 
 import (
-	"api/common/common_msg_id"
+	"self_go_gin/common/common_msg_id"
 
 	"github.com/gin-gonic/gin"
 )

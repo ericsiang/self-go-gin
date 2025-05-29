@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"api/common/common_msg_id"
-	"api/initialize"
-	"api/util/gin_response"
+	"self_go_gin/common/common_msg_id"
+	"self_go_gin/initialize"
+	"self_go_gin/util/gin_response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	opa "api/util/open_policy_agent"
+	opa "self_go_gin/util/open_policy_agent"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

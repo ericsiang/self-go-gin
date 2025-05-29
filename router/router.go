@@ -1,17 +1,15 @@
 package router
 
 import (
-	v1 "api/api/v1"
-	"api/initialize"
-	"api/middleware"
-	"fmt"
 	"os"
+	v1 "self_go_gin/api/v1"
+	"self_go_gin/initialize"
+	"self_go_gin/middleware"
 
 	// "strconv"
 	"syscall"
-	"time"
 
-	_ "api/docs"
+	_ "self_go_gin/docs"
 
 	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
@@ -46,6 +44,7 @@ func Router(quit chan os.Signal) *gin.Engine {
 	setDefaultMiddlewares(router)
 	registerSwagger(router)
 	apiV1Group := router.Group("/api/v1")
+	router.POST("createUser", v1.CreateUser)
 	setNoAuthRoutes(apiV1Group)
 	setAuthRoutes(apiV1Group, quit)
 	return router
@@ -61,12 +60,12 @@ func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 	apiV1UsersGroup := apiV1Group.Group("/users")
 	apiV1AdminsGroup := apiV1Group.Group("/admins")
 
-	apiV1Group.Use(middleware.RateLimit("test-limit")).GET("/limit_ping", func(c *gin.Context) {
-		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
-	})
-	apiV1Group.Use(middleware.OpaMiddleware()).GET("/opa_ping", func(c *gin.Context) {
-		c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
-	})
+	// apiV1Group.Use(middleware.RateLimit("test-limit")).GET("/limit_ping", func(c *gin.Context) {
+	// 	c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
+	// })
+	// apiV1Group.Use(middleware.OpaMiddleware()).GET("/opa_ping", func(c *gin.Context) {
+	// 	c.String(200, "pong "+fmt.Sprint(time.Now().Unix()))
+	// })
 
 	apiV1Group.GET("/logtest", func(c *gin.Context) {
 		test := true
@@ -80,19 +79,18 @@ func setNoAuthRoutes(apiV1Group *gin.RouterGroup) {
 		}
 	})
 	Login(apiV1UsersGroup, apiV1AdminsGroup)
-
 }
 
 func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
-	apiV1AuthGroup := apiV1Group.Group("/auth")
-	apiV1AuthGroup.Use(middleware.JwtAuthMiddleware())
+	// apiV1AuthGroup := apiV1Group.Group("/auth")
+	apiV1Group.Use(middleware.JwtAuthMiddleware())
 
 	// Users
-	apiV1AuthUsersGroup := apiV1AuthGroup.Group("/users")
+	apiV1AuthUsersGroup := apiV1Group.Group("/users")
 	Users(apiV1AuthUsersGroup)
 
 	// Admins
-	apiV1AuthAdminsGroup := apiV1AuthGroup.Group("/admins")
+	apiV1AuthAdminsGroup := apiV1Group.Group("/admins")
 	Admins(apiV1AuthAdminsGroup, quit)
 
 }
@@ -106,7 +104,6 @@ func Login(userRouter, adminRouter *gin.RouterGroup) {
 
 // =================================   auth group   =====================================
 func Users(router *gin.RouterGroup) {
-	router.POST("", v1.CreateUser)
 	router.GET("/:filterUsersId", v1.GetUsersById)
 }
 

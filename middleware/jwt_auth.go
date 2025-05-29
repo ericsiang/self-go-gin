@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"api/util/jwt_secret"
+	"self_go_gin/util/jwt_secret"
 	"errors"
 	"net/http"
 	"strings"

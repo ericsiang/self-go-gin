@@ -8,13 +8,18 @@
 │   │                          (controller角色，依需求可再細拆service 層，
 │   │                          以防 controller 過肥 )
 │   └── v1                  => 區分版本
-│       └── users.go
+│       └── request         => 放置 request struct
+│       └── response        => 放置 response struct
+│       └── users.go        => user api example
 ├── asset                   => 放置素材檔案
 ├── common 常用宣告放這
 │   └── common_const
 │   │   └── common_const.go => 設定常數
 │   └── common_msg_id
 │       └── common_msg_id.go=> 定義 response result
+├── dao                     => 資料存取層
+│   └── generic_dao.go      => 通用操作，依需求各 dao 可以繼承使用 
+│   └── user_dao.go         => user dao example
 ├── database                => DB 操作(ex: migration、seeder)
 │   ├── migrate
 │   │   └── migrate.go      => 執行 migrate 建立資料表
@@ -43,12 +48,14 @@
 ├── main.go
 ├── middleware              => 置放中間件
 │   └── jwt_auth.go         => jwt middleware
-├── model                   => 資料表結構的 struct 跟 DB CRUD 操作置放在此(依需求可再細拆 repository 層)
+├── model                   => 資料表結構的 struct
 │   ├── gormModel.go        => gorm struct 基本欄位
 │   ├── model_setting.go    => 取得 DB 連線 
 │   └── users.go            => user example
+├── repository              => 資料操作，負責使用 dao 進行資料操作
 ├── router                  => 置放 API 路徑
 │   └── router.go
+├── service                 => 業務邏輯處理
 ├── test                    => 置放測試檔
 └── util                    => 置放封裝工具
     ├── bcryptEncap         => 字串加密核對

@@ -1,12 +1,12 @@
 package model
 
-type Users struct {
+type User struct {
 	GormModel
 	Account  string `gorm:"type:varchar(255);not null;uniqueIndex;" json:"account" binding:"required"`
 	Password string `gorm:"type:varchar(255);not null;" json:"password" binding:"required"`
 }
 
-func (model Users) CreateUser() (Users, error) {
+func (model User) CreateUser() (User, error) {
 	err := db.Create(&model).Error
 	if err != nil {
 		return model, err
@@ -14,7 +14,7 @@ func (model Users) CreateUser() (Users, error) {
 	return model, nil
 }
 
-func (model Users) GetUsersById(UserId int64) (Users, error) {
+func (model User) GetUsersById(UserId int64) (User, error) {
 	err := db.Where("id = ?", UserId).First(&model).Error
 	if err != nil {
 		return model, err
@@ -22,7 +22,7 @@ func (model Users) GetUsersById(UserId int64) (Users, error) {
 	return model, nil
 }
 
-func (model Users) GetUsersByAccount(account string) (Users, error) {
+func (model User) GetUsersByAccount(account string) (User, error) {
 	err := db.Where("account = ?", account).First(&model).Error
 	if err != nil {
 		return model, err

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"api/database/migrate"
-	"api/database/seeder"
-	"api/initialize"
-	"api/router"
+	"self_go_gin/database/migrate"
+	"self_go_gin/database/seeder"
+	"self_go_gin/initialize"
+	"self_go_gin/router"
 	"context"
 	"net/http"
 	"os"

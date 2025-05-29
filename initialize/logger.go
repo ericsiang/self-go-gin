@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	"api/common/common_const"
-	"api/util/zap_logger"
+	"self_go_gin/common/common_const"
+	"self_go_gin/util/zap_logger"
 	"log"
 
 	"go.uber.org/zap"

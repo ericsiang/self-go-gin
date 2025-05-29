@@ -1,14 +1,14 @@
 package migrate
 
 import (
-	"api/initialize"
-	"api/model"
+	"self_go_gin/initialize"
+	"self_go_gin/model"
 )
 
 var err error
 
 func Migrate() {
-	err = initialize.GetMysqlDB().AutoMigrate(&model.Users{})
+	err = initialize.GetMysqlDB().AutoMigrate(&model.User{})
 	panicErr(err)
 	err = initialize.GetMysqlDB().AutoMigrate(&model.Admins{})
 	panicErr(err)

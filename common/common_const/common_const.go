@@ -17,3 +17,8 @@ const (
 	LoginUser  LoginRole = "user"
 	LoginAdmin LoginRole = "admin"
 )
+
+// dao Paginate 分頁
+const(
+	PER_PAGE_COUNT = 15 // 每頁數量
+)

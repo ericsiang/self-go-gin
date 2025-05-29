@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"api/initialize"
+	"self_go_gin/initialize"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

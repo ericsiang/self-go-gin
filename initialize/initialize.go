@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"api/util/jwt_secret"
+	"self_go_gin/util/jwt_secret"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -16,7 +16,7 @@ func InitSetting() {
 	zap.S().Info("配置信息 : ", serverEnv)
 	gin.SetMode(serverEnv.APP_Mode)
 	initMysql()
-	initRedis()
+	// initRedis()
 	jwt_secret.SetJwtSecret(GetServerEnv().JwtSecret)
 	// vaildate 中文化
 	if err := initValidateLang("zh"); err != nil {

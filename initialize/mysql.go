@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"api/model"
+	"self_go_gin/model"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
