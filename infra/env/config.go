@@ -32,3 +32,8 @@ type ServerConfig struct {
 	Redis     RedisConfig   `mapstructure:"Redis" json:"Redis"`
 	MongoDB   MongoDBConfig `mapstructure:"MongoDB" json:"MongoDB"`
 }
+
+func NewServerConfig() *ServerConfig {
+	return &ServerConfig{}
+}
+

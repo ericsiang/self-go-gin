@@ -17,13 +17,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-
 )
 
 var (
-	serverEnv = &env.ServerConfig{}
+	serverEnv = env.NewServerConfig()
 )
-
 
 // @title  Self go gin Swagger API
 // @version 1.0
