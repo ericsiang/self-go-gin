@@ -36,4 +36,3 @@ type ServerConfig struct {
 func NewServerConfig() *ServerConfig {
 	return &ServerConfig{}
 }
-

@@ -2,12 +2,12 @@ package v1
 
 import (
 	"net/http"
-	"self_go_gin/domains/admin/service"
 	"self_go_gin/common/common_msg_id"
-	"self_go_gin/gin_application/handler"
-	"self_go_gin/util/gin_response"
+	"self_go_gin/domains/admin/service"
 	"self_go_gin/gin_application/api/v1/admin/request"
 	"self_go_gin/gin_application/api/v1/admin/response"
+	"self_go_gin/gin_application/handler"
+	"self_go_gin/util/gin_response"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

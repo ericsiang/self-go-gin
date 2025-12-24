@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"net/http"
 	"self_go_gin/common/common_msg_id"
 	"self_go_gin/gin_application/validate_lang"
 	"self_go_gin/util/gin_response"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

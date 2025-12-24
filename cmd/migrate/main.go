@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"self_go_gin/infra/database/migrate"
-	"self_go_gin/infra/database/seeder"
 	"self_go_gin/gin_application/router"
 	"self_go_gin/gin_application/validate_lang"
 	"self_go_gin/infra/cache/redis"
+	"self_go_gin/infra/database/migrate"
+	"self_go_gin/infra/database/seeder"
 	"self_go_gin/infra/env"
 	"self_go_gin/infra/orm/gorm_mysql"
 	"self_go_gin/util/jwt_secret"
@@ -92,7 +92,7 @@ func httpServerRun() {
 }
 
 func initSetting() {
-	env.InitEnv("conf/",serverEnv, initSetting)
+	env.InitEnv("conf/", serverEnv, initSetting)
 	zap.S().Info("配置信息 : ", serverEnv)
 	gin.SetMode(serverEnv.APP_Mode)
 	gorm_mysql.InitMysql(GetServerEnv)

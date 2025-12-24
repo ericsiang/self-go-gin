@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fmt"
-	"self_go_gin/gin_application/inter/response"
 	"net/http"
+	"self_go_gin/gin_application/inter/response"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"

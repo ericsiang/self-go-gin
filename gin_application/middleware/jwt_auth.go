@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"self_go_gin/util/jwt_secret"
 	"errors"
 	"net/http"
+	"self_go_gin/util/jwt_secret"
 	"strings"
 
 	"github.com/gin-gonic/gin"

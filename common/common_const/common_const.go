@@ -19,6 +19,6 @@ const (
 )
 
 // dao Paginate 分頁
-const(
+const (
 	PER_PAGE_COUNT = 15 // 每頁數量
 )

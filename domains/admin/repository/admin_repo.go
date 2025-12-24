@@ -2,9 +2,9 @@ package repository
 
 import (
 	"fmt"
+	"gorm.io/gorm"
 	"self_go_gin/domains/admin/entity/model"
 	"self_go_gin/domains/admin/repository/dao"
-	"gorm.io/gorm"
 )
 
 type AdminRepositoryInterface interface {

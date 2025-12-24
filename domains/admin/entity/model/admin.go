@@ -1,6 +1,6 @@
 package model
 
-import(
+import (
 	"self_go_gin/internal/model"
 )
 

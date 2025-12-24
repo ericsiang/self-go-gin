@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	opa "self_go_gin/util/open_policy_agent"
 	"net/http"
+	opa "self_go_gin/util/open_policy_agent"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

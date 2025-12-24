@@ -1,8 +1,8 @@
 package jwt_secret
 
 import (
-	"self_go_gin/common/common_const"
 	"errors"
+	"self_go_gin/common/common_const"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"

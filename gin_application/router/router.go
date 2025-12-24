@@ -2,8 +2,8 @@ package router
 
 import (
 	"os"
-	v1_user "self_go_gin/gin_application/api/v1/user"
 	v1_admin "self_go_gin/gin_application/api/v1/admin"
+	v1_user "self_go_gin/gin_application/api/v1/user"
 	middleware "self_go_gin/gin_application/middleware"
 	"self_go_gin/infra/log/zap_log"
 

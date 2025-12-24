@@ -2,8 +2,8 @@ package repository
 
 import (
 	"fmt"
-	"self_go_gin/domains/user/repository/dao"
 	"self_go_gin/domains/user/entity/model"
+	"self_go_gin/domains/user/repository/dao"
 
 	"gorm.io/gorm"
 )

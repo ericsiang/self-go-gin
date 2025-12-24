@@ -6,9 +6,9 @@ import (
 	"self_go_gin/gin_application/api/v1/user/request"
 
 	"self_go_gin/common/common_const"
-	"self_go_gin/gin_application/handler"
 	"self_go_gin/domains/user/entity/model"
 	"self_go_gin/domains/user/repository"
+	"self_go_gin/gin_application/handler"
 	"self_go_gin/util/bcryptEncap"
 	"self_go_gin/util/jwt_secret"
 

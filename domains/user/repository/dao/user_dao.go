@@ -2,8 +2,8 @@ package dao
 
 import (
 	"fmt"
-	"self_go_gin/infra/orm/gorm_mysql"
 	"self_go_gin/domains/user/entity/model"
+	"self_go_gin/infra/orm/gorm_mysql"
 	"self_go_gin/internal/dao"
 )
 
