@@ -1,4 +1,4 @@
-package validate_lang
+package validlang
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 
 var trans unitrans.Translator
 
-// loca 通常取决于 http 请求头的 'Accept-Language'
+// InitValidateLang 初始化驗證語系，locales 通常取决于 http 请求头的 'Accept-Language'
 func InitValidateLang(local string) (err error) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		zhT := zh.New() //chinese
@@ -43,6 +43,7 @@ func InitValidateLang(local string) (err error) {
 	return
 }
 
+// ErrorValidateCheckAndTrans 錯誤驗證檢查並翻譯
 func ErrorValidateCheckAndTrans(err error) (translateErrs validator.ValidationErrorsTranslations, ok bool) {
 	// 取得validator.ValidationErrors類型的errors，
 	validErrs, ok := err.(validator.ValidationErrors)

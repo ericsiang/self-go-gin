@@ -40,6 +40,7 @@ func setDefaultMiddlewares(router *gin.Engine) {
 	})) //跨域請求的中間件
 }
 
+// Router 路由
 func Router(quit chan os.Signal) *gin.Engine {
 	router := gin.New()
 	setDefaultMiddlewares(router)
@@ -98,21 +99,26 @@ func setAuthRoutes(apiV1Group *gin.RouterGroup, quit chan os.Signal) {
 
 // =================================   no auth group   =====================================
 
+// Login 登入
 func Login(userRouter, adminRouter *gin.RouterGroup) {
 	userRouter.POST("/login", v1_user.UserLogin)
 	adminRouter.POST("/login", v1_admin.AdminLogin)
 }
 
 // =================================   auth group   =====================================
+
+// Users 用戶
 func Users(router *gin.RouterGroup) {
-	router.GET("/:filterUsersId", v1_user.GetUsersById)
+	router.GET("/:filterUsersId", v1_user.GetUsersByID)
 }
 
+// Admins 管理員
 func Admins(router *gin.RouterGroup, quit chan os.Signal) {
-	router.GET("/:filterAdminsId", v1_admin.GetAdminsById)
+	router.GET("/:filterAdminsId", v1_admin.GetAdminsByID)
 	Shutdown(router, quit)
 }
 
+// Shutdown 優雅關閉服務
 func Shutdown(router *gin.RouterGroup, quit chan os.Signal) {
 	router.GET("/shutdown", func(c *gin.Context) {
 		quit <- syscall.SIGINT

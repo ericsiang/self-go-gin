@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// OpaMiddleware OPA 權限認證中間件
 func OpaMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		result, err := opa.GetQueryResult(c)

@@ -3,9 +3,12 @@ package dao
 import (
 	"fmt"
 	"math"
-	"self_go_gin/common/common_const"
 
 	"gorm.io/gorm"
+)
+
+const (
+	PerPageCount = 15 // 每頁數量
 )
 
 type GenericDaoInterface[T any] interface {
@@ -94,7 +97,7 @@ func (g *GenericDAO[T]) Paginate(db *gorm.DB, result []T, option PaginateOption)
 
 	// 如果沒有指定每頁數量，預設 15
 	if option.PerPageCount < 1 {
-		option.PerPageCount = common_const.PER_PAGE_COUNT
+		option.PerPageCount = PerPageCount
 	}
 
 	// 排序
@@ -152,7 +155,7 @@ func (g *GenericDAO[T]) SimplePaginate(db *gorm.DB, result []T, option PaginateO
 		option.Page = 1
 	}
 	if option.PerPageCount < 1 {
-		option.PerPageCount = common_const.PER_PAGE_COUNT
+		option.PerPageCount = PerPageCount
 	}
 
 	// 排序

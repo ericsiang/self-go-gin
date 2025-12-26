@@ -8,16 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
+// UserRepositoryInterface 用戶倉庫接口
 type UserRepositoryInterface interface {
 	GetDB() *gorm.DB
 	GetUsersByAccount(account string) (*model.User, error)
 	CreateUser(newUser *model.User) (*model.User, error)
 }
 
+// userRepositoryImpl 用戶倉庫實現
 type userRepositoryImpl struct {
 	dao dao.UserDaoInterface
 }
 
+// NewUserRepository 創建用戶倉庫
 func NewUserRepository() UserRepositoryInterface {
 	return &userRepositoryImpl{
 		dao: dao.NewUserDao(),
@@ -29,24 +32,24 @@ func (r *userRepositoryImpl) GetDB() *gorm.DB {
 }
 
 func (r *userRepositoryImpl) GetUsersByAccount(account string) (*model.User, error) {
-	log_data := map[string]interface{}{
+	logData := map[string]interface{}{
 		"account": account,
 	}
 	user, err := r.dao.GetUsersByAccount(account)
 	if err != nil {
-		return nil, fmt.Errorf("UserRepositoryImpl GetUsersByAccount() data: %s \n %w", log_data, err)
+		return nil, fmt.Errorf("UserRepositoryImpl GetUsersByAccount() data: %s \n %w", logData, err)
 	}
 
 	return user, err
 }
 
 func (r *userRepositoryImpl) CreateUser(newUser *model.User) (*model.User, error) {
-	log_data := map[string]interface{}{
+	logData := map[string]interface{}{
 		"newUser": newUser,
 	}
 	user, err := r.dao.GetGenericDao().Create(newUser)
 	if err != nil {
-		return nil, fmt.Errorf("UserRepositoryImpl CreateUser() data: %s \n %w", log_data, err)
+		return nil, fmt.Errorf("UserRepositoryImpl CreateUser() data: %s \n %w", logData, err)
 	}
 	return user, nil
 }

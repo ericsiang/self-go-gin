@@ -1,13 +1,13 @@
 package gin_response
 
 import (
-	"self_go_gin/common/common_msg_id"
+	"self_go_gin/common/msgid"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Response struct {
-	Result common_msg_id.MsgId `json:"result" binding:"required"`
+	Result msgid.MsgID `json:"result" binding:"required"`
 	Msg    string              `json:"msg"`
 	Data   interface{}         `json:"data"`
 }
@@ -18,7 +18,7 @@ func CreateMsgData(key, value string) map[string]string {
 	return msg
 }
 
-func SuccessResponse(c *gin.Context, statusCode int, msg string, data interface{}, result common_msg_id.MsgId) {
+func SuccessResponse(c *gin.Context, statusCode int, msg string, data interface{}, result msgid.MsgID) {
 	c.JSON(statusCode, Response{
 		Result: result,
 		Msg:    msg,
@@ -26,7 +26,7 @@ func SuccessResponse(c *gin.Context, statusCode int, msg string, data interface{
 	})
 }
 
-func ErrorResponse(c *gin.Context, statusCode int, msg string, result common_msg_id.MsgId, errData interface{}) {
+func ErrorResponse(c *gin.Context, statusCode int, msg string, result msgid.MsgID, errData interface{}) {
 	c.JSON(statusCode, Response{
 		Result: result,
 		Msg:    msg,

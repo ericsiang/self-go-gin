@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// JwtAuthMiddleware JWT 認證中間件
 func JwtAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var isPass = true

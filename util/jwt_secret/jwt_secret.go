@@ -2,13 +2,20 @@ package jwt_secret
 
 import (
 	"errors"
-	"self_go_gin/common/common_const"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 var jwtSecret []byte
+
+type LoginRole string
+
+// login role
+const (
+	LoginUser  LoginRole = "user"
+	LoginAdmin LoginRole = "admin"
+)
 
 type Claims struct {
 	UserID  uint `json:"user_id"`
@@ -21,14 +28,14 @@ func SetJwtSecret(secret string) {
 }
 
 // GenerateToken 根據用戶的用戶id 生成JWT token
-func GenerateToken(checkLoginRole common_const.LoginRole, loginId uint) (string, error) {
+func GenerateToken(checkLoginRole LoginRole, loginId uint) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(1 * time.Hour)
 	claims := Claims{}
 	switch checkLoginRole {
-	case common_const.LoginUser:
+	case LoginUser:
 		claims.UserID = loginId
-	case common_const.LoginAdmin:
+	case LoginAdmin:
 		claims.AdminID = loginId
 	default:
 		return "", errors.New("LoginRole not allow")

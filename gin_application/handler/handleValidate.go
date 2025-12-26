@@ -2,15 +2,17 @@ package handler
 
 import (
 	"net/http"
-	"self_go_gin/common/common_msg_id"
-	"self_go_gin/gin_application/validate_lang"
+	"self_go_gin/common/msgid"
+	validlang "self_go_gin/gin_application/validate_lang"
+
 	"self_go_gin/util/gin_response"
 
 	"github.com/gin-gonic/gin"
 )
 
+// ValidCheckAndTrans 檢查驗證錯誤並翻譯
 func ValidCheckAndTrans(context *gin.Context, err error) (ok bool) {
-	validTrans, ok := validate_lang.ErrorValidateCheckAndTrans(err)
+	validTrans, ok := validlang.ErrorValidateCheckAndTrans(err)
 	if ok {
 		var validTransMsgData = make(map[int]string)
 		var i int
@@ -19,7 +21,7 @@ func ValidCheckAndTrans(context *gin.Context, err error) (ok bool) {
 			i++
 		}
 
-		gin_response.ErrorResponse(context, http.StatusBadRequest, "validate fail", common_msg_id.Fail, validTransMsgData)
+		gin_response.ErrorResponse(context, http.StatusBadRequest, "validate fail", msgid.Fail, validTransMsgData)
 		return ok
 	}
 	return false

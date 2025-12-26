@@ -4,6 +4,7 @@ import (
 	"self_go_gin/internal/model"
 )
 
+// Admins 管理員帳號密碼表
 type Admins struct {
 	model.GormModel
 	Account  string `gorm:"type:varchar(255);not null;uniqueIndex;" json:"account" binding:"required"`

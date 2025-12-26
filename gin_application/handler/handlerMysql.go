@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// MysqlErrorCheck 檢查 MySQL 錯誤
 func MysqlErrorCheck(ctx *gin.Context, err error) (bool, error) {
 	if err != nil {
 		var mysqlErr *mysql.MySQLError

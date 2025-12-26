@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"self_go_gin/gin_application/router"
-	"self_go_gin/gin_application/validate_lang"
+	validlang "self_go_gin/gin_application/validate_lang"
 
 	"self_go_gin/infra/env"
 	"self_go_gin/infra/orm/gorm_mysql"
@@ -89,12 +89,13 @@ func initSetting() {
 	// redis.InitRedis(GetServerEnv)
 	jwt_secret.SetJwtSecret(GetServerEnv().JwtSecret)
 	// vaildate 中文化
-	if err := validate_lang.InitValidateLang("zh"); err != nil {
+	if err := validlang.InitValidateLang("zh"); err != nil {
 		fmt.Fprintln(os.Stderr, "init trans failed, err:", err)
 		panic(err)
 	}
 }
 
+// GetServerEnv 獲取服務配置
 func GetServerEnv() *env.ServerConfig {
 	return serverEnv
 }

@@ -1,13 +1,13 @@
-package jwt_secret
+package feature
 
 import (
-	"self_go_gin/common/common_const"
+	"self_go_gin/util/jwt_secret"
 	"testing"
 )
 
 func TestGenerateToken(t *testing.T) {
-	SetJwtSecret("your_secret_key")
-	token, err := GenerateToken(common_const.LoginUser, 1)
+	jwt_secret.SetJwtSecret("your_secret_key")
+	token, err := jwt_secret.GenerateToken(jwt_secret.LoginUser, 1)
 	if err != nil {
 		t.Error(err)
 	}
@@ -22,16 +22,16 @@ func TestGenerateToken(t *testing.T) {
 }
 
 func TestParseToken(t *testing.T) {
-	SetJwtSecret("your_secret_key")
-	token, _ := GenerateToken(common_const.LoginUser, 1)
-	claims, err := ParseToken(token)
+	jwt_secret.SetJwtSecret("your_secret_key")
+	token, _ := jwt_secret.GenerateToken(jwt_secret.LoginUser, 1)
+	claims, err := jwt_secret.ParseToken(token)
 	if err != nil {
 		t.Error(err)
 	}
 	t.Logf("UserID: %d", claims.UserID)
 
-	token, _ = GenerateToken(common_const.LoginAdmin, 1)
-	claims, err = ParseToken(token)
+	token, _ = jwt_secret.GenerateToken(jwt_secret.LoginAdmin, 1)
+	claims, err = jwt_secret.ParseToken(token)
 	if err != nil {
 		t.Error(err)
 	}
@@ -39,9 +39,9 @@ func TestParseToken(t *testing.T) {
 }
 
 func TestParseInvalidToken(t *testing.T) {
-	SetJwtSecret("your_secret_key")
+	jwt_secret.SetJwtSecret("your_secret_key")
 	invalidJwtToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjowLCJhZG1pbl9pZCI6MSwiTWFwQ2xhaW1zIjp7ImV4cCI6MTcyMTIwNzI1MywiaXNzIjoiZ2luLWJsb2cifX0.y4Ku16plzvIUUPoCnF08xSG9JAOFgijv83ZNerxjjjo"
-	_, err := ParseToken(invalidJwtToken)
+	_, err := jwt_secret.ParseToken(invalidJwtToken)
 	if err == nil {
 		t.Error("Expected error parsing invalid token, but got nil")
 	}

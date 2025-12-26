@@ -2,7 +2,7 @@ package v1
 
 import (
 	"net/http"
-	"self_go_gin/common/common_msg_id"
+	"self_go_gin/common/msgid"
 	"self_go_gin/domains/admin/service"
 	"self_go_gin/gin_application/api/v1/admin/request"
 	"self_go_gin/gin_application/api/v1/admin/response"
@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// CreateAdmin 創建管理員
 // @Summary  Create Admins
 // @Description Create Admins
 // @Tags Admins
@@ -29,12 +30,12 @@ func CreateAdmin(ctx *gin.Context) {
 	if err := ctx.ShouldBindBodyWith(&data, binding.JSON); err != nil {
 		check := handler.ValidCheckAndTrans(ctx, err)
 		if check {
-			gin_response.ErrorResponse(ctx, http.StatusBadRequest, "request_parameter_validation_failed", common_msg_id.Fail, nil)
+			gin_response.ErrorResponse(ctx, http.StatusBadRequest, "request_parameter_validation_failed", msgid.Fail, nil)
 			return
 		}
 		// 非validator.ValidationErrors類型錯誤直接傳回
 		zap.L().Error("\n Api CreateAdmin() 失敗(ShouldBindBodyWith fail) : " + err.Error())
-		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", common_msg_id.Fail, nil)
+		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", msgid.Fail, nil)
 		return
 	}
 
@@ -47,12 +48,13 @@ func CreateAdmin(ctx *gin.Context) {
 	}
 
 	respData := response.CreateAdminResponse{
-		AdminId: admin.ID,
+		AdminID: admin.ID,
 		Account: admin.Account,
 	}
-	gin_response.SuccessResponse(ctx, http.StatusOK, "", respData, common_msg_id.Success)
+	gin_response.SuccessResponse(ctx, http.StatusOK, "", respData, msgid.Success)
 }
 
+// AdminLogin 管理員登入
 // @Summary  Admin Login
 // @Description Admin Login
 // @Tags Admins
@@ -69,12 +71,12 @@ func AdminLogin(ctx *gin.Context) {
 	if err := ctx.ShouldBindBodyWith(&data, binding.JSON); err != nil {
 		check := handler.ValidCheckAndTrans(ctx, err)
 		if check {
-			gin_response.ErrorResponse(ctx, http.StatusBadRequest, "request_parameter_validation_failed", common_msg_id.Fail, nil)
+			gin_response.ErrorResponse(ctx, http.StatusBadRequest, "request_parameter_validation_failed", msgid.Fail, nil)
 			return
 		}
 		// 非validator.ValidationErrors類型錯誤直接傳回
 		zap.L().Error("\n Api AdminLogin() 失敗(ShouldBindBodyWith fail) : " + err.Error())
-		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", common_msg_id.Fail, nil)
+		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", msgid.Fail, nil)
 		return
 	}
 
@@ -85,10 +87,11 @@ func AdminLogin(ctx *gin.Context) {
 		zap.L().Error("\n Api AdminLogin() \n " + err.Error())
 		return
 	}
-	gin_response.SuccessResponse(ctx, http.StatusOK, "", gin_response.CreateMsgData("jwt_token", *jwtToken), common_msg_id.Success)
+	gin_response.SuccessResponse(ctx, http.StatusOK, "", gin_response.CreateMsgData("jwt_token", *jwtToken), msgid.Success)
 
 }
 
+// GetAdminsByID 根據ID獲取管理員
 // @Summary Get Admins By ID
 // @Description Get Admins By ID
 // @Tags Admins
@@ -100,13 +103,13 @@ func AdminLogin(ctx *gin.Context) {
 // @Failure 400 {string}  "失敗"
 // @Failure 401 {string}  "Unauthorized"
 // @Router /api/v1/auth/admins/{filterAdminsId} [get]
-func GetAdminsById(ctx *gin.Context) {
+func GetAdminsByID(ctx *gin.Context) {
 	var data request.GetAdminsByIDRequest
 
-	admin_id, _ := ctx.Get("adminId")
-	zap.S().Info("admin_id :", admin_id)
-	data.FilterAdminsId = ctx.Param("filterAdminsId")
+	adminID, _ := ctx.Get("adminId")
+	zap.S().Info("admin_id :", adminID)
+	data.FilterAdminsID = ctx.Param("filterAdminsId")
 	zap.S().Info("FilterAdminsId :", data)
 
-	gin_response.SuccessResponse(ctx, http.StatusOK, "", nil, common_msg_id.Success)
+	gin_response.SuccessResponse(ctx, http.StatusOK, "", nil, msgid.Success)
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"self_go_gin/common/common_msg_id"
+	"self_go_gin/common/msgid"
 	"self_go_gin/domains/user/service"
 	"self_go_gin/gin_application/api/v1/user/request"
 	"self_go_gin/gin_application/handler"
@@ -15,6 +15,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// CreateUser 創建用戶
 // @Summary  Create Users
 // @Description Create Users
 // @Tags Users
@@ -37,7 +38,7 @@ func CreateUser(ctx *gin.Context) {
 		}
 		// 非validator.ValidationErrors類型錯誤直接傳回
 		zap.L().Error("\n Api CreateUser() 失敗(ShouldBindBodyWith fail) : " + err.Error())
-		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", common_msg_id.Fail, nil)
+		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", msgid.Fail, nil)
 		return
 	}
 
@@ -48,9 +49,10 @@ func CreateUser(ctx *gin.Context) {
 		zap.L().Error("\n Api CreateUser() \n " + err.Error())
 		return
 	}
-	gin_response.SuccessResponse(ctx, http.StatusOK, "", nil, common_msg_id.Success)
+	gin_response.SuccessResponse(ctx, http.StatusOK, "", nil, msgid.Success)
 }
 
+// UserLogin 用戶登入
 // @Summary  User Login
 // @Description User Login
 // @Tags Users
@@ -66,12 +68,12 @@ func UserLogin(ctx *gin.Context) {
 	if err := ctx.ShouldBindBodyWith(&data, binding.JSON); err != nil {
 		check := handler.ValidCheckAndTrans(ctx, err)
 		if check {
-			gin_response.ErrorResponse(ctx, http.StatusBadRequest, "request_parameter_validation_failed", common_msg_id.Fail, nil)
+			gin_response.ErrorResponse(ctx, http.StatusBadRequest, "request_parameter_validation_failed", msgid.Fail, nil)
 			return
 		}
 		// 非validator.ValidationErrors類型錯誤直接傳回
 		zap.L().Error("\n Api UserLogin() 失敗(ShouldBindBodyWith fail) : " + err.Error())
-		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", common_msg_id.Fail, nil)
+		gin_response.ErrorResponse(ctx, http.StatusNotFound, "invalid_request_parameters", msgid.Fail, nil)
 		return
 	}
 
@@ -82,9 +84,10 @@ func UserLogin(ctx *gin.Context) {
 		zap.L().Error("\n Api UserLogin() \n " + err.Error())
 		return
 	}
-	gin_response.SuccessResponse(ctx, http.StatusOK, "", gin_response.CreateMsgData("jwt_token", *jwtToken), common_msg_id.Success)
+	gin_response.SuccessResponse(ctx, http.StatusOK, "", gin_response.CreateMsgData("jwt_token", *jwtToken), msgid.Success)
 }
 
+// GetUsersByID 根據ID獲取用戶
 // @Summary Get Users By ID
 // @Description Get Users By ID
 // @Tags Users
@@ -96,20 +99,20 @@ func UserLogin(ctx *gin.Context) {
 // @Failure 400 {string}  "失敗"
 // @Failure 401 {string}  "Unauthorized"
 // @Router /api/v1/auth/users/{filterUsersId} [get]
-func GetUsersById(ctx *gin.Context) {
+func GetUsersByID(ctx *gin.Context) {
 	var data request.GetUsersByIDRequest
-	usersId, ok := ctx.Get("usersId")
+	usersID, ok := ctx.Get("usersID")
 	if !ok {
-		gin_response.ErrorResponse(ctx, http.StatusBadRequest, "can not get users", common_msg_id.Fail, nil)
+		gin_response.ErrorResponse(ctx, http.StatusBadRequest, "can not get users", msgid.Fail, nil)
 		return
 	}
-	data.FilterUsersId = ctx.Param("filterUsersId")
-	stringUsersId := fmt.Sprintf("%v", usersId)
-	if data.FilterUsersId != stringUsersId {
-		gin_response.ErrorResponse(ctx, http.StatusBadRequest, "user not match", common_msg_id.Fail, nil)
+	data.FilterUsersID = ctx.Param("filterUsersID")
+	stringUsersID := fmt.Sprintf("%v", usersID)
+	if data.FilterUsersID != stringUsersID {
+		gin_response.ErrorResponse(ctx, http.StatusBadRequest, "user not match", msgid.Fail, nil)
 		return
 	}
 
-	gin_response.SuccessResponse(ctx, http.StatusOK, "success", data.FilterUsersId, common_msg_id.Success)
+	gin_response.SuccessResponse(ctx, http.StatusOK, "success", data.FilterUsersID, msgid.Success)
 
 }
