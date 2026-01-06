@@ -13,10 +13,12 @@ import (
 var policy []byte
 var defaultResult rego.ResultSet
 
+// readPolicy 讀取OPA策略文件
 func readPolicy() ([]byte, error) {
 	return policy, nil
 }
 
+// GetQueryResult 根據請求上下文獲取OPA查詢結果
 func GetQueryResult(c *gin.Context) (rego.ResultSet, error) {
 	policy, err := readPolicy()
 	if err != nil {

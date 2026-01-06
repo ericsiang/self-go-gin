@@ -1,4 +1,4 @@
-package bcryptEncap
+package bcryptencap
 
 import (
 	"testing"
