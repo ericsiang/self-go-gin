@@ -10,7 +10,13 @@ import (
 
 var envFile = "env.yaml"
 
-func InitEnv(envPath string, serverConfig *ServerConfig, reload_func func()) {
+// InitEnv 初始化環境變量
+/*
+envPath: 環境變量文件所在路徑
+serverConfig: 服務器配置實例
+reload_func: 配置文件改變時的回調函數
+*/
+func InitEnv(envPath string, serverConfig *ServerConfig, reloadFunc func()) {
 	//viper 讀取環境變量的套件
 	v := viper.New()
 	fmt.Printf("讀取配置文件: %s\n", envPath+envFile)
@@ -28,7 +34,7 @@ func InitEnv(envPath string, serverConfig *ServerConfig, reload_func func()) {
 	}
 	v.WatchConfig() // 監聽 env file
 	v.OnConfigChange(func(e fsnotify.Event) {
-		reload_func()
+		reloadFunc()
 		fmt.Println("Config file changed:", e.Name)
 	})
 }

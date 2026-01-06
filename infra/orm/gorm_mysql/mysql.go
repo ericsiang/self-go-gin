@@ -16,7 +16,7 @@ import (
 )
 
 var db *gorm.DB
-
+// InitMysql 初始化 MySQL 資料庫連接
 func InitMysql(GetServerEnv func() *env.ServerConfig) {
 	var config *gorm.Config
 	gormZaplogger := zapgorm2.New(zap.L())
@@ -56,6 +56,7 @@ func InitMysql(GetServerEnv func() *env.ServerConfig) {
 	fmt.Println("mysql connect success")
 }
 
+// GetMysqlDB 返回 MySQL 資料庫連接
 func GetMysqlDB() *gorm.DB {
 	return db
 }

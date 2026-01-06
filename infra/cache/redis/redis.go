@@ -12,6 +12,7 @@ import (
 
 var redisClient *redis.Client
 
+// InitRedis 初始化 Redis 客戶端
 func InitRedis(GetServerEnv func() *env.ServerConfig) *redis.Client {
 	redisConfig := GetServerEnv().Redis
 	redisAddr := redisConfig.Host + ":" + strconv.Itoa(redisConfig.Port)
@@ -32,6 +33,7 @@ func InitRedis(GetServerEnv func() *env.ServerConfig) *redis.Client {
 	return redisClient
 }
 
+// GetRedisClient 返回 Redis 客戶端
 func GetRedisClient() *redis.Client {
 	return redisClient
 }

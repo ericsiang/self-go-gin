@@ -1,4 +1,4 @@
-package track_time
+package tracktime
 
 import (
 	"testing"

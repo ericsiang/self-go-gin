@@ -5,8 +5,7 @@ import (
 	v1_admin "self_go_gin/gin_application/api/v1/admin"
 	v1_user "self_go_gin/gin_application/api/v1/user"
 	middleware "self_go_gin/gin_application/middleware"
-	"self_go_gin/infra/log/zap_log"
-
+	"self_go_gin/infra/log/zaplog"
 	// "strconv"
 	"syscall"
 
@@ -21,7 +20,7 @@ import (
 )
 
 func setDefaultMiddlewares(router *gin.Engine) {
-	zapLogger := zap_log.GetZapLogger("../../log/")
+	zapLogger := zaplog.GetZapLogger("../../log/")
 	/* Add a ginzap middleware, which:
 	 * - Logs all requests, like a combined access and error log.
 	 * - Logs to stdout.

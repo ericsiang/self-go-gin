@@ -94,7 +94,7 @@ func httpServerRun() {
 func initSetting() {
 	env.InitEnv("conf/", serverEnv, initSetting)
 	zap.S().Info("配置信息 : ", serverEnv)
-	gin.SetMode(serverEnv.APP_Mode)
+	gin.SetMode(serverEnv.AppMode)
 	gorm_mysql.InitMysql(GetServerEnv)
 	redis.InitRedis(GetServerEnv)
 	jwt_secret.SetJwtSecret(GetServerEnv().JwtSecret)

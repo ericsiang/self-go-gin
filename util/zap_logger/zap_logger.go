@@ -12,6 +12,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// RotatelogsConfig 日誌切割配置
 type RotatelogsConfig struct {
 	InfoLogPath   string
 	ErrorLogPath  string
@@ -21,10 +22,12 @@ type RotatelogsConfig struct {
 	RotationTime  time.Duration
 }
 
+// Logger 自定義 Logger 結構體
 type Logger struct {
 	zapLogger *zap.Logger
 }
 
+// NewLogger 創建並返回一個新的 Logger 實例
 func NewLogger(rotatelogsConfig *RotatelogsConfig) (*Logger, error) {
 	zapLogger, err := initZap(rotatelogsConfig)
 	if err != nil {
@@ -41,10 +44,12 @@ func NewLogger(rotatelogsConfig *RotatelogsConfig) (*Logger, error) {
 	return &Logger{zapLogger: zapLogger}, nil
 }
 
+// GetZapLogger 返回 zap.Logger 實例
 func (l *Logger) GetZapLogger() *zap.Logger {
 	return l.zapLogger
 }
 
+// getFileRotatelogs 根據配置返回一個 RotateLogs 實例
 func getFileRotatelogs(filePath string, rotatelogsConfig *RotatelogsConfig) (*rotatelogs.RotateLogs, error) {
 	/*
 		設定日誌輸出路徑，使用file-rotatelogs 進行切割
@@ -77,6 +82,7 @@ func getFileRotatelogs(filePath string, rotatelogsConfig *RotatelogsConfig) (*ro
 	return logf, nil
 }
 
+// getNewCore 創建並返回一個新的 zapcore.Core 實例
 func getNewCore(encoder zapcore.Encoder, logf *rotatelogs.RotateLogs, level zapcore.LevelEnabler) zapcore.Core {
 	writeSyncer := zapcore.AddSync(logf)
 	/*
@@ -88,10 +94,12 @@ func getNewCore(encoder zapcore.Encoder, logf *rotatelogs.RotateLogs, level zapc
 	return zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(writeSyncer, zapcore.AddSync(os.Stdout)), level)
 }
 
+// customTimeEncoder 自定義時間格式
 func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05"))
 }
 
+// getEncoderConfig 返回 zapcore.EncoderConfig 配置
 func getEncoderConfig() zapcore.EncoderConfig {
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:        "time",   //日誌時間的key
@@ -110,6 +118,7 @@ func getEncoderConfig() zapcore.EncoderConfig {
 	return encoderConfig
 }
 
+// getEncoder 返回 zapcore.Encoder 實例
 func getEncoder() zapcore.Encoder {
 	encoderConfig := getEncoderConfig()
 
@@ -126,6 +135,7 @@ func getEncoder() zapcore.Encoder {
 	return encoder
 }
 
+// getLevelEnabler 返回信息級別和錯誤級別的 zap.LevelEnablerFunc
 func getLevelEnabler() (infoLevel, errorLevel zap.LevelEnablerFunc) {
 	infoLevel = zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 		return lvl >= zapcore.InfoLevel
@@ -137,6 +147,8 @@ func getLevelEnabler() (infoLevel, errorLevel zap.LevelEnablerFunc) {
 
 	return infoLevel, errorLevel
 }
+
+// initZap 初始化 zap.Logger 實例
 func initZap(rotatelogsConfig *RotatelogsConfig) (*zap.Logger, error) {
 	encoder := getEncoder()
 

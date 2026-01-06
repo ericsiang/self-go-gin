@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// MetricsMiddleware 是一個 Gin 中間件，用於記錄 HTTP 請求指標
 func MetricsMiddleware(collector *MetricsCollector) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()

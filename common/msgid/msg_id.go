@@ -5,7 +5,7 @@ type MsgID uint32
 
 const (
 	// Success 成功
-	Success MsgID = iota 
+	Success MsgID = iota
 	// Fail 失敗
 	Fail
 	// TokenExpires 令牌過期

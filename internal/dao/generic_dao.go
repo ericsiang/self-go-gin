@@ -8,9 +8,11 @@ import (
 )
 
 const (
+	// PerPageCount 每頁數量
 	PerPageCount = 15 // 每頁數量
 )
 
+// GenericDaoInterface 通用資料存取介面
 type GenericDaoInterface[T any] interface {
 	GetDB() *gorm.DB
 	Create(model *T) (*T, error)
@@ -40,16 +42,19 @@ type PaginateOption struct {
 	GroupBy      string
 }
 
+// GenericDAO 通用資料存取實現
 type GenericDAO[T any] struct {
 	db *gorm.DB
 }
 
+// NewGenericDAO 建立新的通用資料存取物件
 func NewGenericDAO[T any](db *gorm.DB) GenericDaoInterface[T] {
 	return &GenericDAO[T]{
 		db: db,
 	}
 }
 
+// GetDB 返回通用資料存取的 GORM 資料庫連接
 func (g *GenericDAO[T]) GetDB() *gorm.DB {
 	return g.db
 }
@@ -121,13 +126,13 @@ func (g *GenericDAO[T]) Paginate(db *gorm.DB, result []T, option PaginateOption)
 	// 查詢當前頁數據
 	err = db.Offset(offset).Limit(option.PerPageCount).Find(&result).Error
 	if err != nil {
-		log_data := map[string]interface{}{
+		logData := map[string]interface{}{
 			"Offset": offset,
 			"Limit":  option.PerPageCount,
 			"Order":  option.OrderBy,
 			"Group":  option.GroupBy,
 		}
-		return nil, fmt.Errorf("GenericDAO Paginate() Find() data : %+v : %w", log_data, err)
+		return nil, fmt.Errorf("GenericDAO Paginate() Find() data : %+v : %w", logData, err)
 	}
 
 	// 計算最後一頁
@@ -173,13 +178,13 @@ func (g *GenericDAO[T]) SimplePaginate(db *gorm.DB, result []T, option PaginateO
 	// 多額外查詢一筆資料來判斷是否有下一頁
 	err := db.Offset(offset).Limit(option.PerPageCount + 1).Find(&result).Error
 	if err != nil {
-		log_data := map[string]interface{}{
+		logData := map[string]interface{}{
 			"Offset": offset,
 			"Limit":  option.PerPageCount + 1,
 			"Order":  option.OrderBy,
 			"Group":  option.GroupBy,
 		}
-		return nil, fmt.Errorf("GenericDAO SimplePaginate() Find() data : %+v : %w", log_data, err)
+		return nil, fmt.Errorf("GenericDAO SimplePaginate() Find() data : %+v : %w", logData, err)
 	}
 
 	// 判斷是否有更多數據，如果查詢的數據量大於每頁數量，則有更多數據

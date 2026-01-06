@@ -9,34 +9,39 @@ import (
 
 var jwtSecret []byte
 
+// LoginRole 登入角色
 type LoginRole string
 
 // login role
 const (
+	// 	LoginUser 用戶角色
 	LoginUser  LoginRole = "user"
+	// LoginAdmin 管理員角色
 	LoginAdmin LoginRole = "admin"
 )
 
+// Claims 用戶聲明
 type Claims struct {
 	UserID  uint `json:"user_id"`
 	AdminID uint `json:"admin_id"`
 	jwt.MapClaims
 }
 
+// SetJwtSecret 設置JWT密鑰
 func SetJwtSecret(secret string) {
 	jwtSecret = []byte(secret)
 }
 
 // GenerateToken 根據用戶的用戶id 生成JWT token
-func GenerateToken(checkLoginRole LoginRole, loginId uint) (string, error) {
+func GenerateToken(checkLoginRole LoginRole, loginID uint) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(1 * time.Hour)
 	claims := Claims{}
 	switch checkLoginRole {
 	case LoginUser:
-		claims.UserID = loginId
+		claims.UserID = loginID
 	case LoginAdmin:
-		claims.AdminID = loginId
+		claims.AdminID = loginID
 	default:
 		return "", errors.New("LoginRole not allow")
 	}
@@ -51,6 +56,7 @@ func GenerateToken(checkLoginRole LoginRole, loginId uint) (string, error) {
 
 }
 
+// ParseToken 解析JWT token
 func ParseToken(token string) (*Claims, error) {
 	//用于解析鉴权的声明，方法内部主要是具体的解码和校验的过程，最终返回*Token
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {

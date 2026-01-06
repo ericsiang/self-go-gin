@@ -1,4 +1,4 @@
-package zap_log
+package zaplog
 
 import (
 	"log"
@@ -9,12 +9,20 @@ import (
 )
 
 const (
-	ZapLoggerMaxSize      = 1 * 1024 * 1024 // log 大保存容量，單位為Byte
-	ZapLoggerMaxCounts    = 2               // log 最大保存個數，單位為個數
-	ZapLoggerMaxAge       = -1              // log 最大保存時間，單位為時間單位，不使用時請設定為 -1
-	ZapLoggerRotationTime = 24 * time.Hour  // log 切割頻率，單位為時間單位
+	// ZapLoggerMaxSize log 大保存容量，單位為Byte
+	ZapLoggerMaxSize      = 1 * 1024 * 1024 
+	// ZapLoggerMaxCounts log 最大保存個數，單位為個數
+	ZapLoggerMaxCounts    = 2  
+	// ZapLoggerMaxAge log 最大保存時間，單位為時間單位，不使用時請設定為 -1            
+	ZapLoggerMaxAge       = -1   
+	// ZapLoggerRotationTime log 切割頻率，單位為時間單位           
+	ZapLoggerRotationTime = 24 * time.Hour  
 )
 
+// GetZapLogger 獲取 zap Logger 實例
+/*
+logPath: 日誌文件保存路徑
+*/
 func GetZapLogger(logPath string) *zap.Logger {
 	rotatelogsConfig := &zap_logger.RotatelogsConfig{
 		InfoLogPath:   logPath + "info/info_%Y-%m-%d.log",

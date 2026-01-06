@@ -8,7 +8,7 @@ import (
 	"self_go_gin/domains/admin/repository"
 	"self_go_gin/gin_application/api/v1/admin/request"
 	"self_go_gin/gin_application/handler"
-	"self_go_gin/util/bcryptEncap"
+	"self_go_gin/util/bcryptencap"
 	"self_go_gin/util/jwt_secret"
 )
 
@@ -35,7 +35,7 @@ func (s *AdminService) CreateAdmin(req request.CreateAdminRequest) (*model.Admin
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		//密碼加密
-		bcryptPassword, err := bcryptEncap.GenerateFromPassword(req.Password)
+		bcryptPassword, err := bcryptencap.GenerateFromPassword(req.Password)
 		if err != nil {
 			return nil, fmt.Errorf("AdminService CreateAdmin() bcrypt fail data: %s \n %w", logData, err)
 		}
@@ -67,7 +67,7 @@ func (s *AdminService) CheckLogin(req request.AdminLoginRequest) (*string, error
 	}
 
 	//密碼驗證
-	if err := bcryptEncap.CompareHashAndPassword([]byte(admin.Password), []byte(req.Password)); err != nil {
+	if err := bcryptencap.CompareHashAndPassword([]byte(admin.Password), []byte(req.Password)); err != nil {
 		return nil, fmt.Errorf("AdminService CheckLogin() CompareHashAndPassword() data : %+v \n %w", logData, err) // 密碼錯誤
 	}
 

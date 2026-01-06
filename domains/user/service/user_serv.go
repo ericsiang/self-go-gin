@@ -8,7 +8,7 @@ import (
 	"self_go_gin/domains/user/entity/model"
 	"self_go_gin/domains/user/repository"
 	"self_go_gin/gin_application/handler"
-	"self_go_gin/util/bcryptEncap"
+	"self_go_gin/util/bcryptencap"
 	"self_go_gin/util/jwt_secret"
 
 	"gorm.io/gorm"
@@ -37,7 +37,7 @@ func (s *UserService) CreateUser(req request.CreateUserRequest) (*model.User, er
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		//密碼加密
-		bcryptPassword, err := bcryptEncap.GenerateFromPassword(req.Password)
+		bcryptPassword, err := bcryptencap.GenerateFromPassword(req.Password)
 		if err != nil {
 			return nil, fmt.Errorf("UserService CreateUser() bcrypt fail data: %s \n %w", logData, err)
 		}
@@ -70,7 +70,7 @@ func (s *UserService) CheckLogin(req request.UserLoginRequest) (*string, error) 
 	}
 
 	//密碼驗證
-	if err := bcryptEncap.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+	if err := bcryptencap.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return nil, fmt.Errorf("UserService CheckLogin() CompareHashAndPassword() data : %+v \n %w", logData, err) // 密碼錯誤
 	}
 	jwtToken, err := jwt_secret.GenerateToken(jwt_secret.LoginUser, user.ID)

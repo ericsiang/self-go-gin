@@ -8,6 +8,7 @@ import (
 
 var err error
 
+// Migrate 自動遷移數據庫結構
 func Migrate() {
 	err = gorm_mysql.GetMysqlDB().AutoMigrate(&user_model.User{})
 	panicErr(err)

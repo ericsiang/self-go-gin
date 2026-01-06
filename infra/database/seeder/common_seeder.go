@@ -4,10 +4,11 @@ import (
 	admin_model "self_go_gin/domains/admin/entity/model"
 	user_model "self_go_gin/domains/user/entity/model"
 	"self_go_gin/infra/orm/gorm_mysql"
-	"self_go_gin/util/bcryptEncap"
+	"self_go_gin/util/bcryptencap"
 	"strconv"
 )
 
+// CreateUser 創建用戶資料
 func CreateUser() {
 	db := gorm_mysql.GetMysqlDB()
 	seeder := NewSeeder(db)
@@ -16,7 +17,7 @@ func CreateUser() {
 	}
 	var users []*user_model.User
 	//密碼加密
-	bcryptPassword, err := bcryptEncap.GenerateFromPassword("123456")
+	bcryptPassword, err := bcryptencap.GenerateFromPassword("123456")
 	if err != nil {
 		panic("Seeder CreateUser() bcrypt fail")
 	}
@@ -34,6 +35,7 @@ func CreateUser() {
 	}
 }
 
+// CreateAdmin 創建管理員資料
 func CreateAdmin() {
 	db := gorm_mysql.GetMysqlDB()
 	seeder := NewSeeder(db)
@@ -42,7 +44,7 @@ func CreateAdmin() {
 	}
 	var admins []*admin_model.Admins
 	//密碼加密
-	bcryptPassword, err := bcryptEncap.GenerateFromPassword("123456")
+	bcryptPassword, err := bcryptencap.GenerateFromPassword("123456")
 	if err != nil {
 		panic("Seeder CreateAdmin() bcrypt fail")
 	}
