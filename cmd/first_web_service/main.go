@@ -78,6 +78,12 @@ func httpServerRun() {
 		return
 	}
 
+	// 等待超時服務關閉完成
+	select {    
+	case <-ctx.Done():
+		fmt.Println("Graceful Shutdown Timeout ...")
+		close(quit)
+	}
 	fmt.Println("Server exiting")
 }
 
