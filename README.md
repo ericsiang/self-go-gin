@@ -151,6 +151,61 @@
   * 測試檔案配置 
   * gin 框架相關程式碼集中於 /gin_application 
   * 可擴展性高，可輕鬆添加新的功能模組 （ EX：新增 MongoDB ）
+* 優化功能
+  * Graceful Shutdown： 停止收request，5秒等待所有連線處理結束
+   
+
+### 架構圖結構
+#### HTTP 請求處理流程
+``` mermaid
+graph LR
+    Client((用戶端)) -->|HTTP Request| Router["Router<br/>路由匹配"]
+    
+    Router --> Middleware["Middleware<br/>日誌/認證/授權"]
+    
+    Middleware --> Controller["Controller<br/>參數驗證與轉換"]
+    
+    Controller --> Service["Service<br/>業務邏輯處理"]
+    
+    Service --> Repository["Repository/DAO<br/>資料存取操作"]
+    
+    Repository --> Database[("Database<br/>MySQL/Redis")]
+    
+    Database --> Repository
+    Repository --> Service
+    Service --> Controller
+    Controller --> Response["Response<br/>統一格式輸出"]
+    Response --> Client
+    
+```
+
+#### 框架可替換性設計
+``` mermaid
+graph TB
+    subgraph Current ["目前架構 (使用 Gin)"]
+        GinApp["gin_application"]
+    end
+    
+    subgraph Core ["核心業務層 (框架無關)"]
+        DomainCore["domains"]
+        InfraCore["infra"]
+    end
+    
+    subgraph Future ["未來可替換 (例如 Echo)"]
+        EchoApp["echo_application"]
+    end
+    
+    GinApp -.->|調用| DomainCore
+    EchoApp -.->|調用| DomainCore
+    DomainCore --> InfraCore
+    
+    Replace["🔄 替換 Web 框架<br/>只需修改 Web 框架層<br/>Domain 和 Infrastructure 層無需變動"]
+    
+    GinApp -.-> Replace
+    Replace -.-> EchoApp
+    
+```
+
 
 ### 使用到的 package
 <table>
