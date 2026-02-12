@@ -1,7 +1,6 @@
 package opa
 
 import (
-	"context"
 	_ "embed"
 	"errors"
 
@@ -37,7 +36,7 @@ func GetQueryResult(c *gin.Context) (rego.ResultSet, error) {
 	}
 
 	// evaluate rego query by supplying values extracted from header
-	result, err := query.Eval(context.Background(), rego.EvalInput(map[string]interface{}{
+	result, err := query.Eval(c, rego.EvalInput(map[string]interface{}{
 		"role":     c.Request.Header.Get("role"),
 		"action":   c.Request.Header.Get("action"),
 		"resource": c.Request.Header.Get("resource"),
