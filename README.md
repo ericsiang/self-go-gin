@@ -137,20 +137,25 @@
   * 日誌系統 (Zap)
   * 快取機制 (Redis)
   * 資料庫遷移和種子資料
-  * 中間件
-  * 限流機制
-  * API 版本控制
+ 
 * 安全性考量
   * JWT 認證
   * OPA 權限控制
   * Bcrypt 加密核對
+* Web 框架 (gin_application)
+  * router
+  * 中間件
+    * 限流機制
+    * JWT 認證機制
+    * 權限驗證機制
+  * API 版本控制
 * 標準化與規範的開發實踐
   * 統一的錯誤處理
   * 參數驗證機制
   * Swagger 文檔支援
   * 測試檔案配置 
   * gin 框架相關程式碼集中於 /gin_application 
-  * 可擴展性高，可輕鬆添加新的功能模組 （ EX：新增 MongoDB ）
+  * 可擴展性高，可輕鬆添加新的功能模組 （ EX：新增 MongoDB ） 
 * 優化功能
   * Graceful Shutdown： 停止收request，5秒等待所有連線處理結束
    
