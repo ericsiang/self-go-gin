@@ -71,9 +71,9 @@ func (s *AdminService) CheckLogin(req request.AdminLoginRequest) (*string, error
 		return nil, fmt.Errorf("AdminService CheckLogin() CompareHashAndPassword() data : %+v \n %w", logData, err) // 密碼錯誤
 	}
 
-	jwtToken, err := jwt_secret.GenerateToken(jwt_secret.LoginUser, admin.ID)
+	jwtToken, err := jwt_secret.GenerateToken(jwt_secret.LoginAdmin, admin.ID)
 	if err != nil {
-		return nil, fmt.Errorf("UserService AdminService() GenerateToken() data : %+v \n %w", logData, err) // 密碼錯誤
+		return nil, fmt.Errorf("AdminService CheckLogin() GenerateToken() data : %+v \n %w", logData, err) // 密碼錯誤
 	}
 
 	return &jwtToken, nil

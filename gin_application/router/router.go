@@ -108,12 +108,12 @@ func Login(userRouter, adminRouter *gin.RouterGroup) {
 
 // Users 用戶
 func Users(router *gin.RouterGroup) {
-	router.GET("/:filterUsersId", v1_user.GetUsersByID)
+	router.GET("/:filterUsersID", v1_user.GetUsersByID)
 }
 
 // Admins 管理員
 func Admins(router *gin.RouterGroup, quit chan os.Signal) {
-	router.GET("/:filterAdminsId", v1_admin.GetAdminsByID)
+	router.GET("/:filterAdminsID", v1_admin.GetAdminsByID)
 	Shutdown(router, quit)
 }
 

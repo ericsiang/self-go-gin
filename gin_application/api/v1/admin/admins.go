@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"self_go_gin/common/msgid"
 	"self_go_gin/domains/admin/service"
@@ -106,10 +107,17 @@ func AdminLogin(ctx *gin.Context) {
 func GetAdminsByID(ctx *gin.Context) {
 	var data request.GetAdminsByIDRequest
 
-	adminID, _ := ctx.Get("adminId")
-	zap.S().Info("admin_id :", adminID)
-	data.FilterAdminsID = ctx.Param("filterAdminsId")
-	zap.S().Info("FilterAdminsId :", data)
+	adminID, ok := ctx.Get("adminID")
+	if !ok {
+		gin_response.ErrorResponse(ctx, http.StatusBadRequest, "can not get admins", msgid.Fail, nil)
+		return
+	}
+	data.FilterAdminsID = ctx.Param("filterAdminsID")
+	stringAdminsID := fmt.Sprintf("%v", adminID)
+	if data.FilterAdminsID != stringAdminsID {
+		gin_response.ErrorResponse(ctx, http.StatusBadRequest, "admin not match", msgid.Fail, nil)
+		return
+	}
 
 	gin_response.SuccessResponse(ctx, http.StatusOK, "", nil, msgid.Success)
 }
