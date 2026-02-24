@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"self_go_gin/gin_application/router"
 	validlang "self_go_gin/gin_application/validate_lang"
-	"self_go_gin/infra/cache/redis"
 	"self_go_gin/infra/database/migrate"
 	"self_go_gin/infra/database/seeder"
 	"self_go_gin/infra/env"
@@ -22,7 +23,8 @@ import (
 )
 
 var (
-	serverEnv = &env.ServerConfig{}
+	serverEnv  = &env.ServerConfig{}
+	withSeeder = flag.Bool("with-seeder", false, "Run seeder after migration")
 )
 
 // @title  Self go gin Swagger API
@@ -36,9 +38,27 @@ var (
 // @name   		Authorization
 // @description Use Bearer JWT Token
 func main() {
+	flag.Parse()
+
+	fmt.Println("=================================")
+	fmt.Println("Database Migration Tool")
+	fmt.Println("=================================")
+
 	initSetting()
-	migrate.Migrate()  // migrate database
-	seeder.RunSeeder() // create seeder data
+
+	fmt.Println("Running database migration...")
+	migrate.Migrate() // migrate database
+	fmt.Println("✓ Migration completed successfully!")
+
+	if *withSeeder {
+		fmt.Println("Running database seeder...")
+		seeder.RunSeeder() // create seeder data
+		fmt.Println("✓ Seeder completed successfully!")
+	}
+
+	fmt.Println("=================================")
+	fmt.Println("All tasks completed!")
+	fmt.Println("=================================")
 	// httpServerRun()
 
 	//測試 log 切割
@@ -92,15 +112,22 @@ func httpServerRun() {
 }
 
 func initSetting() {
-	env.InitEnv("conf/", serverEnv, initSetting)
-	zap.S().Info("配置信息 : ", serverEnv)
+	// 支持 Docker 環境和本地開發環境
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
+		configPath = "../../conf/"
+	}
+
+	env.InitEnv(configPath, serverEnv, initSetting)
+	fmt.Printf("配置信息 : %+v\n", serverEnv)
 	gin.SetMode(serverEnv.AppMode)
 	gorm_mysql.InitMysql(GetServerEnv)
-	redis.InitRedis(GetServerEnv)
+	// Redis is optional for migration
+	// redis.InitRedis(GetServerEnv)
 	jwt_secret.SetJwtSecret(GetServerEnv().JwtSecret)
 	// vaildate 中文化
 	if err := validlang.InitValidateLang("zh"); err != nil {
-		zap.S().Error("init trans failed, err:%v\n", err.Error())
+		fmt.Fprintf(os.Stderr, "init trans failed, err:%v\n", err)
 		panic(err)
 	}
 }

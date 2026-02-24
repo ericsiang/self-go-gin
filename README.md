@@ -95,7 +95,8 @@
 ├── log                        => 置放 log 檔，可依需求將 log level 區分
 │   ├── error
 │   └── info
-├── optimization.md
+├── scripts                    => 各式腳本用資料夾
+│   └── docker                 => docker 建立容器的腳本
 ├── test                       => 放置測試用的程式碼
 │   └── limit_ping_test.go
 ├── tree.md
@@ -158,7 +159,8 @@
   * 可擴展性高，可輕鬆添加新的功能模組 （ EX：新增 MongoDB ） 
 * 優化功能
   * Graceful Shutdown： 停止收request，5秒等待所有連線處理結束
-   
+* 容器化部署
+  * 透過 docker 快速建立容器
 
 ### 架構圖結構
 #### HTTP 請求處理流程

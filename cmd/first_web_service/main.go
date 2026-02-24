@@ -88,7 +88,14 @@ func httpServerRun() {
 }
 
 func initSetting() {
-	env.InitEnv("../../conf/", serverEnv, initSetting)
+	// 支持 Docker 環境和本地開發環境
+	// Docker 環境使用 /app/conf/, 本地環境使用 ../../conf/
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
+		configPath = "../../conf/"
+	}
+	
+	env.InitEnv(configPath, serverEnv, initSetting)
 	fmt.Printf("配置信息 : %+v\n", serverEnv)
 	gin.SetMode(serverEnv.AppMode)
 	gorm_mysql.InitMysql(GetServerEnv)
