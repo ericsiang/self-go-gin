@@ -40,11 +40,16 @@ func CreateAdmin(ctx *gin.Context) {
 		return
 	}
 
-	adminService := service.NewAdminService()
+	adminService ,err := service.NewAdminService()
+	if err != nil {
+		zap.L().Error("\n Api CreateAdmin() NewAdminService fail : " + err.Error())
+		gin_response.ErrorResponse(ctx, http.StatusInternalServerError, "internal_server_error", msgid.Fail, nil)
+		return
+	}
 	admin, err := adminService.CreateAdmin(data)
 	ok, err := handler.HandlerError(ctx, err)
 	if !ok {
-		zap.L().Error("\n Api CreateUser() \n " + err.Error())
+		zap.L().Error("\n Api CreateAdmin() \n " + err.Error())
 		return
 	}
 
@@ -81,7 +86,12 @@ func AdminLogin(ctx *gin.Context) {
 		return
 	}
 
-	adminService := service.NewAdminService()
+	adminService ,err := service.NewAdminService()
+	if err != nil {
+		zap.L().Error("\n Api AdminLogin() NewAdminService fail : " + err.Error())
+		gin_response.ErrorResponse(ctx, http.StatusInternalServerError, "internal_server_error", msgid.Fail, nil)
+		return
+	}
 	jwtToken, err := adminService.CheckLogin(data)
 	ok, err := handler.HandlerError(ctx, err)
 	if !ok {

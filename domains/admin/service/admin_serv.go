@@ -18,10 +18,14 @@ type AdminService struct {
 }
 
 // NewAdminService 創建管理員服務層
-func NewAdminService() *AdminService {
-	return &AdminService{
-		repo: repository.NewAdminRepository(),
+func NewAdminService() (*AdminService, error) {
+	repo, err := repository.NewAdminRepository()
+	if err != nil {
+		return nil, fmt.Errorf("AdminService NewAdminService() : %w", err)
 	}
+	return &AdminService{
+		repo: repo,
+	}, nil
 }
 
 // CreateAdmin 創建管理員

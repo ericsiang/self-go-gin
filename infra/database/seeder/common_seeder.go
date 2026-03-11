@@ -10,7 +10,10 @@ import (
 
 // CreateUser 創建用戶資料
 func CreateUser() {
-	db := gorm_mysql.GetMysqlDB()
+	db ,err := gorm_mysql.GetMysqlDB()
+	if err != nil {
+		panic(err)
+	}
 	seeder := NewSeeder(db)
 	if err := seeder.Clear("users"); err != nil {
 		panic(err)
@@ -37,7 +40,10 @@ func CreateUser() {
 
 // CreateAdmin 創建管理員資料
 func CreateAdmin() {
-	db := gorm_mysql.GetMysqlDB()
+	db ,err := gorm_mysql.GetMysqlDB()
+	if err != nil {
+		panic(err)
+	}
 	seeder := NewSeeder(db)
 	if err := seeder.Clear("admins"); err != nil {
 		panic(err)

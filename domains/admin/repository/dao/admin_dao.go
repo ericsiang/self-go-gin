@@ -18,10 +18,14 @@ type adminDaoImpl struct {
 }
 
 // NewAdminDao 建立管理員帳號密碼表 DAO
-func NewAdminDao() AdminDaoInterface {
-	return &adminDaoImpl{
-		GenericDao: dao.NewGenericDAO[model.Admins](gorm_mysql.GetMysqlDB()),
+func NewAdminDao() (AdminDaoInterface, error) {
+	db, err := gorm_mysql.GetMysqlDB()
+	if err != nil {
+		return nil, fmt.Errorf("AdminDao NewAdminDao() GetMysqlDB fail : %w", err)
 	}
+	return &adminDaoImpl{
+		GenericDao: dao.NewGenericDAO[model.Admins](db),
+	}, nil
 }
 
 func (d *adminDaoImpl) GetGenericDao() dao.GenericDaoInterface[model.Admins] {

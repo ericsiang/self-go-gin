@@ -10,9 +10,13 @@ var err error
 
 // Migrate 自動遷移數據庫結構
 func Migrate() {
-	err = gorm_mysql.GetMysqlDB().AutoMigrate(&user_model.User{})
+	db ,err := gorm_mysql.GetMysqlDB()
+	if err != nil {
+		panic(err)
+	}
+	err = db.AutoMigrate(&user_model.User{})
 	panicErr(err)
-	err = gorm_mysql.GetMysqlDB().AutoMigrate(&admin_model.Admins{})
+	err = db.AutoMigrate(&admin_model.Admins{})
 	panicErr(err)
 }
 

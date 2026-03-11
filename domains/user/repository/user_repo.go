@@ -21,10 +21,14 @@ type userRepositoryImpl struct {
 }
 
 // NewUserRepository 創建用戶倉庫
-func NewUserRepository() UserRepositoryInterface {
-	return &userRepositoryImpl{
-		dao: dao.NewUserDao(),
+func NewUserRepository() (UserRepositoryInterface, error) {
+	dao, err := dao.NewUserDao()
+	if err != nil {
+		return nil, fmt.Errorf("UserRepository NewUserRepository(): %w", err)
 	}
+	return &userRepositoryImpl{
+		dao: dao,
+	},nil
 }
 
 func (r *userRepositoryImpl) GetDB() *gorm.DB {

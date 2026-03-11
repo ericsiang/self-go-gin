@@ -19,10 +19,15 @@ type adminRepositoryImpl struct {
 }
 
 // NewAdminRepository 建立管理員帳號密碼表 Repository
-func NewAdminRepository() AdminRepositoryInterface {
-	return &adminRepositoryImpl{
-		dao: dao.NewAdminDao(),
+func NewAdminRepository() (AdminRepositoryInterface, error) {
+	dao, err := dao.NewAdminDao()
+	if err != nil {
+		return nil, fmt.Errorf("AdminRepository NewAdminRepository() : %w", err)
 	}
+
+	return &adminRepositoryImpl{
+		dao: dao,
+	}, nil
 }
 
 func (r *adminRepositoryImpl) GetDB() *gorm.DB {
@@ -33,6 +38,7 @@ func (r *adminRepositoryImpl) GetAdminByAccount(account string) (*model.Admins, 
 	logData := map[string]interface{}{
 		"account": account,
 	}
+	fmt.Println("logData:",logData)
 	admin, err := r.dao.GetAdminByAccount(account)
 	if err != nil {
 		return nil, fmt.Errorf("AdminRepositoryImpl GetAdminByAccount() data: %s \n %w", logData, err)

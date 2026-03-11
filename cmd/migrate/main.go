@@ -22,6 +22,8 @@ import (
 	"go.uber.org/zap"
 )
 
+
+
 var (
 	serverEnv  = &env.ServerConfig{}
 	withSeeder = flag.Bool("with-seeder", false, "Run seeder after migration")
@@ -117,14 +119,14 @@ func initSetting() {
 	if configPath == "" {
 		configPath = "../../conf/"
 	}
-
-	env.InitEnv(configPath, serverEnv, initSetting)
+	serverEnv := env.GetConfigManager().GetServerEnv()
+	env.InitEnv(configPath)
 	fmt.Printf("配置信息 : %+v\n", serverEnv)
 	gin.SetMode(serverEnv.AppMode)
-	gorm_mysql.InitMysql(GetServerEnv)
+	gorm_mysql.InitMysql(serverEnv)
 	// Redis is optional for migration
 	// redis.InitRedis(GetServerEnv)
-	jwt_secret.SetJwtSecret(GetServerEnv().JwtSecret)
+	jwt_secret.SetJwtSecret(serverEnv.JwtSecret)
 	// vaildate 中文化
 	if err := validlang.InitValidateLang("zh"); err != nil {
 		fmt.Fprintf(os.Stderr, "init trans failed, err:%v\n", err)

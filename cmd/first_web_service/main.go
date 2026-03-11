@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"net/http"
 	"os"
 	"os/signal"
 	"self_go_gin/gin_application/router"
 	validlang "self_go_gin/gin_application/validate_lang"
 
+	"self_go_gin/infra/cache/redis"
 	"self_go_gin/infra/env"
 	"self_go_gin/infra/orm/gorm_mysql"
 	"self_go_gin/util/jwt_secret"
@@ -17,10 +19,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-)
-
-var (
-	serverEnv = env.NewServerConfig()
 )
 
 // @title  Self go gin Swagger API
@@ -34,81 +32,131 @@ var (
 // @name   		Authorization
 // @description Use Bearer JWT Token
 func main() {
+	// 启动初始化（失败会 panic，这是正确的）
 	initSetting()
+	// 运行服务器
 	httpServerRun()
 }
 
 func httpServerRun() {
+	// 创建信号通道
 	quit := make(chan os.Signal, 1)
-	// Set Router
-	router := router.Router(quit)
-	// Listen and Server
-	// serverPort := ":" + strconv.Itoa(initialize.GetServerEnv().GetServerPort())
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	//優雅的關閉服務(服務端關機命令發出後不會立即關機)
-	//建立一個http.Server
+	// 设置路由
+	router := router.Router(quit)
+	serverEnv := env.GetConfigManager().GetServerEnv()
+
+	addr := ":" + strconv.Itoa(serverEnv.Port)
+	// 创建 HTTP Server（添加超时配置）
 	srv := &http.Server{
-		Addr:    ":" + strconv.Itoa(GetServerEnv().Port),
-		Handler: router,
+		Addr:         addr,
+		Handler:      router,
+		ReadTimeout:  15 * time.Second, // 防止慢速客户端攻击
+		WriteTimeout: 15 * time.Second, // 防止慢速响应
+		IdleTimeout:  60 * time.Second, // Keep-Alive 超时
 	}
 
+	// 在 goroutine 中启动服务器
 	go func() {
-		//啟動 http.Server
+		fmt.Printf("HTTP Server is ready and listening on %s\n", addr)
+		fmt.Printf("Swagger UI: http://localhost:%d/swagger-test/index.html\n", serverEnv.Port)
+		// 服務連線
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Fprintln(os.Stderr, "Server listen : ", err)
-			return
+			// 服务器启动失败
+			fmt.Fprintf(os.Stderr, "Server Error: %v\n", err)
+			os.Exit(1)
 		}
 	}()
 
-	/*
-		監聽等待 SIGINT 或 SIGTERM 信号
-		SIGINT -> 由使用者在終端中按下 Ctrl+C 產生，用於請求進程中斷
-		SIGTERM -> 系統預設的終止信號，當你使用 kill 命令（不帶任何信號選項）
-	*/
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	fmt.Println("Preparing Shutdown Server ...")
-	//建立超時上下文，Shutdown可以讓未處理的連線在這個時間內關閉
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	// 等待中断信号或服务器错误
+	sig := <-quit
+	// 接收到关闭信号
+	fmt.Printf("\n Received signal: %s\n", sig)
+	fmt.Println("Initiating graceful shutdown...")
 
-	//停止HTTP服务器
-	if err := srv.Shutdown(ctx); err != nil {
-		fmt.Fprintln(os.Stderr, "Shutdown Error :", err)
-		return
+	// 优雅关闭（5秒超时）
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+
+	// 关闭 HTTP 服务器
+	fmt.Println("Shutting down HTTP server...")
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		fmt.Fprintf(os.Stderr, "Server shutdown error: %v\n", err)
+	} else {
+		fmt.Println("HTTP Server shutdown completed")
 	}
 
-	// 等待超時服務關閉完成
-	select {    
-	case <-ctx.Done():
-		fmt.Println("Graceful Shutdown Timeout ...")
-		close(quit)
+	// 清理资源
+	cleanupResources()
+
+	fmt.Println("Server exited gracefully")
+}
+
+// cleanupResources 清理所有资源（数据库连接等）
+func cleanupResources() {
+	fmt.Println("Cleaning up resources...")
+
+	// 关闭数据库连接
+	if db, err := gorm_mysql.GetMysqlDB(); err != nil {
+		sqlDB, err := db.DB()
+		if err == nil {
+			if err := sqlDB.Close(); err != nil {
+				fmt.Fprintf(os.Stderr, "Failed to close database: %v\n", err)
+			} else {
+				fmt.Println("Mysql connection closed")
+			}
+		}
 	}
-	fmt.Println("Server exiting")
+
+	// 这里可以添加其他资源清理逻辑
+
 }
 
 func initSetting() {
-	// 支持 Docker 環境和本地開發環境
-	// Docker 環境使用 /app/conf/, 本地環境使用 ../../conf/
+	fmt.Println("\n Initializing application...")
+	serverEnv := env.GetConfigManager().GetServerEnv()
+
+	// 1. 获取配置路径
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		configPath = "../../conf/"
 	}
-	
-	env.InitEnv(configPath, serverEnv, initSetting)
-	fmt.Printf("配置信息 : %+v\n", serverEnv)
-	gin.SetMode(serverEnv.AppMode)
-	gorm_mysql.InitMysql(GetServerEnv)
-	// redis.InitRedis(GetServerEnv)
-	jwt_secret.SetJwtSecret(GetServerEnv().JwtSecret)
-	// vaildate 中文化
-	if err := validlang.InitValidateLang("zh"); err != nil {
-		fmt.Fprintln(os.Stderr, "init trans failed, err:", err)
+	fmt.Printf("Config path: %s\n", configPath)
+
+	// 2. 加载配置
+	err := env.InitEnv(configPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "\n 配置初始化失败: %v\n", err)
+		fmt.Fprintln(os.Stderr, "提示：请检查配置文件是否存在且格式正确")
 		panic(err)
 	}
-}
+	fmt.Println("Configuration loaded")
 
-// GetServerEnv 獲取服務配置
-func GetServerEnv() *env.ServerConfig {
-	return serverEnv
+	// 3. 设置 Gin 模式
+	gin.SetMode(serverEnv.AppMode)
+	fmt.Printf("Gin mode: %s\n", serverEnv.AppMode)
+
+	// 4. 初始化数据库
+	if serverEnv.MysqlDB.Host != "" {
+		gorm_mysql.InitMysql(serverEnv)
+	}
+
+	// 5. 初始化 Redis（如果需要）
+	if serverEnv.Redis.Host != "" {
+		redis.InitRedis(serverEnv)
+	}
+
+	// 6. 设置 JWT 密钥
+	jwt_secret.SetJwtSecret(serverEnv.JwtSecret)
+	fmt.Println("JWT secret configured")
+
+	// 7. 初始化验证器中文化
+	if err := validlang.InitValidateLang("zh"); err != nil {
+		fmt.Fprintf(os.Stderr, "\n 验证器初始化失败: %v\n", err)
+		panic(err) 
+	}
+	fmt.Println("Validator localization initialized")
+
+	fmt.Println("\n All components initialized successfully!")
 }

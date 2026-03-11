@@ -42,8 +42,13 @@ func CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	userService := service.NewUserService()
-	_, err := userService.CreateUser(data)
+	userService, err := service.NewUserService()
+	if err != nil {
+		zap.L().Error("\n Api CreateUser() NewUserService fail : " + err.Error())
+		gin_response.ErrorResponse(ctx, http.StatusInternalServerError, "internal_server_error", msgid.Fail, nil)
+		return
+	}
+	_, err = userService.CreateUser(data)
 	ok, err := handler.HandlerError(ctx, err)
 	if !ok {
 		zap.L().Error("\n Api CreateUser() \n " + err.Error())
@@ -77,7 +82,12 @@ func UserLogin(ctx *gin.Context) {
 		return
 	}
 
-	userService := service.NewUserService()
+	userService, err := service.NewUserService()
+	if err != nil {
+		zap.L().Error("\n Api UserLogin() NewUserService fail : " + err.Error())
+		gin_response.ErrorResponse(ctx, http.StatusInternalServerError, "internal_server_error", msgid.Fail, nil)
+		return
+	}
 	jwtToken, err := userService.CheckLogin(data)
 	ok, err := handler.HandlerError(ctx, err)
 	if !ok {

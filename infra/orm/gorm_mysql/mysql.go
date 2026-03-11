@@ -5,7 +5,6 @@ import (
 	"os"
 	"self_go_gin/infra/env"
 	"self_go_gin/internal/model"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -16,8 +15,9 @@ import (
 )
 
 var db *gorm.DB
+
 // InitMysql 初始化 MySQL 資料庫連接
-func InitMysql(GetServerEnv func() *env.ServerConfig) {
+func InitMysql(serverEnv  *env.ServerConfig) {
 	var config *gorm.Config
 	gormZaplogger := zapgorm2.New(zap.L())
 	logger.Default.LogMode(logger.Error)
@@ -38,9 +38,11 @@ func InitMysql(GetServerEnv func() *env.ServerConfig) {
 	}
 
 	//注意：User和Password为MySQL資料庫的管理員密碼，Host和Port為資料庫連接ip端口，DBname為要連接的資料庫
-	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", User,Password,Ip,Port,DBName)
-	dsn := GetServerEnv().MysqlDB.Username + ":" + GetServerEnv().MysqlDB.Password + "@tcp(" + GetServerEnv().MysqlDB.Host + ":" + strconv.Itoa((GetServerEnv().MysqlDB.Port)) + ")/" + GetServerEnv().MysqlDB.DBName + "?charset=utf8mb4&parseTime=True&loc=Local"
-	// zap.L().Info("dsn :"+ dsn)
+	// 使用配置對象的 DSN 方法生成連接字符串
+	mysqlConfig := serverEnv.MysqlDB
+	dsn := mysqlConfig.DSN()
+	fmt.Printf("正在連接 MySQL: %s\n", mysqlConfig.String())
+
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), config)
 	if err != nil {
@@ -57,6 +59,9 @@ func InitMysql(GetServerEnv func() *env.ServerConfig) {
 }
 
 // GetMysqlDB 返回 MySQL 資料庫連接
-func GetMysqlDB() *gorm.DB {
-	return db
+func GetMysqlDB() (*gorm.DB, error) {
+	if db == nil {
+		return nil, fmt.Errorf("MySQL database connection fail or not initialized")
+	}
+	return db, nil
 }

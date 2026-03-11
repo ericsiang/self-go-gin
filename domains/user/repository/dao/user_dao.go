@@ -18,10 +18,14 @@ type userDaoImpl struct {
 }
 
 // NewUserDao 創建用戶數據訪問對象
-func NewUserDao() UserDaoInterface {
-	return &userDaoImpl{
-		GenericDao: dao.NewGenericDAO[model.User](gorm_mysql.GetMysqlDB()),
+func NewUserDao() (UserDaoInterface, error) {
+	db ,err :=gorm_mysql.GetMysqlDB()
+	if err != nil {
+		return nil, fmt.Errorf("UserDao NewUserDao() GetMysqlDB fail : %w", err)
 	}
+	return &userDaoImpl{
+		GenericDao: dao.NewGenericDAO[model.User](db),
+	}, nil
 }
 
 func (d *userDaoImpl) GetGenericDao() dao.GenericDaoInterface[model.User] {

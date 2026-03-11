@@ -6,6 +6,8 @@ import (
 	v1_user "self_go_gin/gin_application/api/v1/user"
 	middleware "self_go_gin/gin_application/middleware"
 	"self_go_gin/infra/log/zaplog"
+	"time"
+
 	// "strconv"
 	"syscall"
 
@@ -122,5 +124,11 @@ func Shutdown(router *gin.RouterGroup, quit chan os.Signal) {
 	router.GET("/shutdown", func(c *gin.Context) {
 		quit <- syscall.SIGINT
 		c.String(200, "shutdown")
+	})
+
+	router.GET("/slow_test", func(c *gin.Context) {
+		time.Sleep(5 * time.Second) // 模拟慢速API
+		zap.L().Info("慢速API完成")
+		c.String(200, "shutdown slow test")
 	})
 }
