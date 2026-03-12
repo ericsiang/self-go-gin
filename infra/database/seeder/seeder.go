@@ -12,8 +12,8 @@ type Seeder struct {
 // RunSeeder 執行數據庫種子建立資料
 func RunSeeder() {
 	//common_seeder
-	// CreateUser()
-	// CreateAdmin()
+	CreateUser()
+	CreateAdmin()
 }
 
 // NewSeeder 創建新的數據庫種子器

@@ -57,7 +57,7 @@ services:
         condition: service_healthy
     networks:
       - gin-network
-    restart: unless-stopped
+    
 
 networks:
   gin-network:

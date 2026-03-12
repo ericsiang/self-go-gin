@@ -12,7 +12,8 @@
 │   └── common_msg_id
 │       └── common_msg_id.go
 ├── conf                        => 放置環境變數設定檔案
-│   └── env.yaml
+│   ├── env.docker.yaml.example
+│   └── env.yaml.example
 ├── domains                     => 放置 domain 層的程式碼，依據功能分為不同的子目錄
 │   ├── admin                   => 後台管理員
 │   │   ├── entity              => 資料模型
@@ -132,7 +133,8 @@
   * 採用 DDD (Domain-Driven Design) 思維
   * 職責分離 Entity → Repository (DAO) → Service 三層分離
   * 符合關注點分離原則
-  * 可維護性高，修改業務邏輯只需動 service 層
+  * 可維護性高，修改業務邏輯只需動 domains 資料夾
+  
 * 基礎設施
   * 配置管理
   * 日誌系統 (Zap)
@@ -143,6 +145,7 @@
   * JWT 認證
   * OPA 權限控制
   * Bcrypt 加密核對
+  
 * Web 框架 (gin_application)
   * router
   * 中間件
@@ -150,6 +153,7 @@
     * JWT 認證機制
     * 權限驗證機制
   * API 版本控制
+  
 * 標準化與規範的開發實踐
   * 統一的錯誤處理
   * 參數驗證機制
@@ -157,11 +161,13 @@
   * 測試檔案配置 
   * gin 框架相關程式碼集中於 /gin_application 
   * 可擴展性高，可輕鬆添加新的功能模組 （ EX：新增 MongoDB ） 
+  
 * 優化功能
-  * Graceful Shutdown： 停止收request，5秒等待所有連線處理結束
+  * Graceful Shutdown： 停止收request，等待所有連線處理結束
+  
 * 容器化部署
   * 透過 docker 快速建立容器
-
+  
 ### 架構圖結構
 #### HTTP 請求處理流程
 ``` mermaid
@@ -213,6 +219,9 @@ graph TB
     
 ```
 
+### 快速开始
+* conf 資料夾內，依需求複製配置文件範例，檔名不含.example，並填入真實配置
+* 執行，go run main.go 或查看 make file
 
 ### 使用到的 package
 <table>

@@ -9,10 +9,9 @@ import (
 )
 
 var (
-	envFile = "env.yaml"
+	envFile       = "env.yaml"
 	configManager = NewConfigManager()
 )
-
 
 // LoadConfig 載入配置文件（不監聽變更）
 func LoadConfig(envPath string, serverConfig *ServerConfig) error {
@@ -45,8 +44,15 @@ reloadFunc: 配置文件改變時的回調函數（接收新配置）
 func InitEnv(envPath string) error {
 	v := viper.New()
 	fmt.Printf("讀取配置文件: %s\n", envPath+envFile)
-	v.SetConfigFile(envPath + envFile)
-	
+	if envPath == "" {
+		// 如果未通过环境变量指定，默认使用可执行文件目录下的 conf 文件夹
+		v.SetConfigName("env") // 檔名
+		v.SetConfigType("yaml")   // 格式
+		v.AddConfigPath("./conf") // 執行路徑下的 conf
+		v.AddConfigPath("../../conf")
+	} else {
+		v.SetConfigFile(envPath + envFile)
+	}
 
 	// 初始載入配置
 	if err := v.ReadInConfig(); err != nil {

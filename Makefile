@@ -9,8 +9,9 @@ help: ## 顯示幫助信息
 	@echo "  make clean        - 清理所有容器和卷"
 	@echo "  make restart      - 重啟服務"
 	@echo "  make ps           - 查看運行中的容器"
-	@echo "  make migrate      - 執行資料庫遷移（初始化表結構）"
-	@echo "  make migrate-seed - 執行資料庫遷移並填充種子資料"
+	@echo "  make migrate      - 容器執行資料庫遷移（初始化表結構）"
+	@echo "  make migrate-seed - 容器執行資料庫遷移並填充種子資料"
+	@echo "  make run-local    - 本地開發運行"
 
 build: ## 構建 Docker 映像
 	@echo "構建 Docker 映像..."

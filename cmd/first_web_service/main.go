@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"self_go_gin/gin_application/router"
 	validlang "self_go_gin/gin_application/validate_lang"
 
@@ -56,7 +56,6 @@ func httpServerRun() {
 		WriteTimeout: 15 * time.Second, // 防止慢速响应
 		IdleTimeout:  60 * time.Second, // Keep-Alive 超时
 	}
-
 
 	// 在 goroutine 中启动服务器
 	go func() {
@@ -120,16 +119,15 @@ func initSetting() {
 
 	// 1. 获取配置路径
 	configPath := os.Getenv("CONFIG_PATH")
-	if configPath == "" {
-		configPath = "../../conf/"
-	}
 	fmt.Printf("Config path: %s\n", configPath)
 
 	// 2. 加载配置
 	err := env.InitEnv(configPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "\n 配置初始化失败: %v\n", err)
-		fmt.Fprintln(os.Stderr, "提示：请检查配置文件是否存在且格式正确")
+		cfgFile := filepath.Join(configPath, "env.yaml")
+		fmt.Fprintf(os.Stderr, "期望的配置文件路径: %s\n", cfgFile)
+		fmt.Fprintln(os.Stderr, "请检查配置文件是否存在且格式正确")
 		panic(err)
 	}
 	fmt.Println("Configuration loaded")
@@ -155,7 +153,7 @@ func initSetting() {
 	// 7. 初始化验证器中文化
 	if err := validlang.InitValidateLang("zh"); err != nil {
 		fmt.Fprintf(os.Stderr, "\n 验证器初始化失败: %v\n", err)
-		panic(err) 
+		panic(err)
 	}
 	fmt.Println("Validator localization initialized")
 

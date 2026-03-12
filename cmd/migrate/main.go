@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"self_go_gin/gin_application/router"
 	validlang "self_go_gin/gin_application/validate_lang"
 	"self_go_gin/infra/database/migrate"
@@ -21,8 +22,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
-
-
 
 var (
 	serverEnv  = &env.ServerConfig{}
@@ -116,11 +115,15 @@ func httpServerRun() {
 func initSetting() {
 	// 支持 Docker 環境和本地開發環境
 	configPath := os.Getenv("CONFIG_PATH")
-	if configPath == "" {
-		configPath = "../../conf/"
-	}
+	fmt.Printf("Config path: %s\n", configPath)
 	serverEnv := env.GetConfigManager().GetServerEnv()
-	env.InitEnv(configPath)
+	err := env.InitEnv(configPath)
+	if err != nil {
+		cfgFile := filepath.Join(configPath, "env.yaml")
+		fmt.Fprintf(os.Stderr, "配置初始化失败: %v\n", err)
+		fmt.Fprintf(os.Stderr, "期望的配置文件路径: %s\n", cfgFile)
+		os.Exit(1)
+	}
 	fmt.Printf("配置信息 : %+v\n", serverEnv)
 	gin.SetMode(serverEnv.AppMode)
 	gorm_mysql.InitMysql(serverEnv)
